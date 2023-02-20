@@ -1,12 +1,15 @@
 Package: hclust1d
-Title: What the Package Does (One Line, Title Case)
+Title: Hierarchical Clustering of Univariate (1D) Data
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Szymon", "Nowakowski", email = "s.nowakowski@mimuw.edu.pl", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1939-9512"))
+Description: Hierarchical clustering of univariate (1D) data
+License: GPL (>= 3)
 Encoding: UTF-8
+LazyData: true
 Roxygen: list(markdown = TRUE)
+Suggests: knitr
+URL: https://github.com/SzymonNowakowski/hclust1d 
+BugReports: https://github.com/SzymonNowakowski/hclust1d/issues
 RoxygenNote: 7.2.3
+VignetteBuilder: knitr
