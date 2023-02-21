@@ -7,9 +7,9 @@
 
 # Introduction
 
-`hclust1d` (Hierarchical CLUSTering for 1D) is a suit of algorithms for 1 dimensional hierarchical clustering in $\mathcal{O}(n\log n)$ time. The better algorithmic time complexity paired with its very efficient C++ implementation make `hclust1d` very fast: the computational time beats `stats::hclust` on all sizes of data and is *en par* with `fastcluster::hclust` with small data sizes. However, it is orders of magnitude faster than both multivariate clustering routines on larger data sizes.
+`hclust1d` (Hierarchical CLUSTering for 1D) is a suit of algorithms for 1 dimensional hierarchical clustering in $\mathcal{O}(n\log n)$ time. The better algorithmic time complexity (compared to multidimensional hierarchical clustering) paired with its very efficient C++ implementation make `hclust1d` very fast. The computational time beats `stats::hclust` on all sizes of data and is *en par* with `fastcluster::hclust` with small data sizes. However, it is of orders of magnitude faster than both multivariate clustering routines on larger data sizes.
 
-The outputs of `hclust1d` are in the same S3 class and format as the outputs of `stats::hclust` or  `fastcluster::hclust` and thus the resulting clustering can be further analysed with standard calls to `print`, `plot`, etc.
+The output of `hclust1d` is of the same S3 class and format as the outputs of `stats::hclust` or  `fastcluster::hclust` and thus the resulting clustering can be further analysed with standard calls to `print`, `summary`, `plot` (plots a dendrogram), etc. In fact, for 1D cases the call to `hclust` can be just replaced by a call to `hclust1d` in a *plug-and-play* manner, with the surrounding code unchanged.
 
 ## Installing `hclust1d` package
 
