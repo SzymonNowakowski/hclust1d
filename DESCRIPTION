@@ -13,3 +13,7 @@ URL: https://github.com/SzymonNowakowski/hclust1d
 BugReports: https://github.com/SzymonNowakowski/hclust1d/issues
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
+LinkingTo: 
+    Rcpp
+Imports: 
+    Rcpp
