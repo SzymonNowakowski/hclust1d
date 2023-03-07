@@ -22,7 +22,7 @@ devtools::install_github("SzymonNowakowski/hclust1d")
 Alternatively, to install the current stable CRAN version please execute
 
 ```
-install.packages("hclust")
+install.packages("hclust1d")
 ```
 
 After that, you can load the installed package into memory with a call to `library(hclust1d)`.

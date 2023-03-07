@@ -1,10 +1,22 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
+// [[Rcpp::plugins("cpp11")]]
 
-//shttps://stackoverflow.com/questions/17554242/how-to-obtain-the-index-permutation-after-the-sorting
+std::vector<int> order(std::vector<int> & data) {
+  //https://stackoverflow.com/questions/17554242/how-to-obtain-the-index-permutation-after-the-sorting
 
-
+  std::vector<int> index(data.size(), 0);
+  std::iota(index, index + n, 0);
+  sort(index.begin(), index.end(),
+       [&](const int& a, const int& b) {
+         return (data[a] < data[b]);
+       }
+  );
+  for (int i = 0 ; i != index.size() ; i++) {
+    cout << index[i] << endl;
+  }
+}
 // [[Rcpp::export]]
 List hclust1d_single(NumericVector points) {
 // only single linkage case,
