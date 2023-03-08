@@ -1,21 +1,20 @@
 #include <Rcpp.h>
+#include <vector>
 using namespace Rcpp;
 
 // [[Rcpp::plugins("cpp11")]]
 
-std::vector<int> order(std::vector<int> & data) {
+void order(NumericVector & data, std::vector<int> & index) {
   //https://stackoverflow.com/questions/17554242/how-to-obtain-the-index-permutation-after-the-sorting
 
-  std::vector<int> index(data.size(), 0);
-  std::iota(index, index + n, 0);
+
+  std::iota(index.begin(), index.end(), 0);
   sort(index.begin(), index.end(),
        [&](const int& a, const int& b) {
          return (data[a] < data[b]);
        }
   );
-  for (int i = 0 ; i != index.size() ; i++) {
-    cout << index[i] << endl;
-  }
+
 }
 // [[Rcpp::export]]
 List hclust1d_single(NumericVector points) {
@@ -23,8 +22,10 @@ List hclust1d_single(NumericVector points) {
 // which doesn't need a heap because the cluster distances are the same as singleton distances
 
 
-  order_points <- order(points)
+  std::vector<int> order_points(points.size(), 0);
+  order(points, order_points);
 
+/*
 # construction of a distance vector
     if (length(points) >= 2) {
 
@@ -96,6 +97,7 @@ List hclust1d_single(NumericVector points) {
 
       ret <- list(merge=merge, height=height, order=order_points, labels=labels, call=match.call(), method=method)
         class(ret) <- "hclust"
-
-      return(ret)
+*/
+  List ret;
+  return ret;
 }
