@@ -38,9 +38,8 @@ List hclust1d_single(NumericVector points) {
  * order_points <- order(points)
  */
 
-  auto points_size = points.size();
-  typedef decltype(points_size) R_int;
-  std::vector<int> order_points(points_size, 0);
+  int points_size = points.size();
+  std::vector<int> order_points(points_size);
   order(points, order_points);
 
 // construction of a distance vector
@@ -57,8 +56,9 @@ List hclust1d_single(NumericVector points) {
    * left_seq <- seq_len(count-2)
    * right_seq <- seq(2, len=count-2)
    */
-
-      auto left_seq = [&](R_int i) {
+      //the sequence indexed by the numbers of intervals (there are points_size - 1 intervals)
+      //and returning an index of a left point in each interval (as if they were ordered, but they are not)
+      auto left_seq = [&](int i) {
         // !!! represents R-ish c(left_seq, count-1)
         //input: indexes from 0 to points_size - 2, count: points_size - 1
         //output: indexes from 0 to points_size -2
@@ -66,7 +66,9 @@ List hclust1d_single(NumericVector points) {
         return i;
       };
 
-      auto right_seq = [&](R_int i) {
+      //the sequence indexed by the numbers of intervals (there are points_size - 1 intervals)
+      //and returning an index of a right point in each interval (as if they were ordered, but they are not)
+      auto right_seq = [&](int i) {
         // !!! represents R-ish c(right_seq, count)
         //input: indexes from 0 to points_size - 2, count: points_size - 1
         //output: indexes from 1 to points_size - 1
@@ -78,20 +80,25 @@ List hclust1d_single(NumericVector points) {
    * right_indexes <- order_points[c(right_seq, count)]   # indicates a higher index in a given interval
    * distances <- points[right_indexes] - points[left_indexes]      # lengths of an interval
    */
-      auto left_indexes = [&](R_int i) {
+      //the sequence indexed by the numbers of intervals (there are points_size - 1 intervals)
+      //and returning an index of a left point in each interval
+      auto left_indexes = [&](int i) {
         //input: indexes from 0 to points_size - 2, count: points_size - 1
         assert(i >= 0 and i < points_size - 1);
         return order_points[left_seq(i)];
       };
 
-      auto right_indexes = [&](R_int i) {
+      //the sequence indexed by the numbers of intervals (there are points_size - 1 intervals)
+      //and returning an index of a right point in each interval
+      auto right_indexes = [&](int i) {
         //input: indexes from 0 to points_size - 2, count: points_size - 1
         assert(i >= 0 and i < points_size - 1);
         return order_points[right_seq(i)];
       };
 
+      //the sequence of distances within intervals (there are points_size - 1 intervals)
       std::vector<double> distances;
-      for (R_int i = 0; i < points_size - 1; i++)
+      for (int i = 0; i < points_size - 1; i++)
         distances.push_back(points[right_indexes(i)] - points[left_indexes(i)]);
 
 
@@ -101,6 +108,12 @@ List hclust1d_single(NumericVector points) {
    * left_merges  <- -left_indexes      # minus as in original hclust implementation
    * right_merges <- -right_indexes     # to indicate merge with singletons
    */
+      std::vector<int> interval_left_ids(points_size-1);
+      std::iota(interval_left_ids.begin(), interval_left_ids.end(), -1);  // in C++ -1 means "no id to the left"
+
+      std::vector<int> interval_right_ids(points_size-2);
+      std::iota(interval_right_ids.begin(), interval_right_ids.end(), 0);
+      interval_right_ids.push_back(-1);                                     // in C++ -1 means "no id to the right"
 
 
     }  //end of the if statement
