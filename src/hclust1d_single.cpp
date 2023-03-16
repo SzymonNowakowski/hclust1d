@@ -47,8 +47,8 @@ List hclust1d_single(NumericVector points) {
 /*
  * if (length(points) >= 2) {
  */
-
-    if (points_size >= 2) {
+  std::vector<double> distances;
+  if (points_size >= 2) {
 
   /*
    *  count <- length(points)
@@ -97,7 +97,6 @@ List hclust1d_single(NumericVector points) {
       };
 
       //the sequence of distances within intervals (there are points_size - 1 intervals)
-      std::vector<double> distances;
       for (int i = 0; i < points_size - 1; i++)
         distances.push_back(points[right_indexes(i)] - points[left_indexes(i)]);
 
@@ -109,70 +108,94 @@ List hclust1d_single(NumericVector points) {
    * right_merges <- -right_indexes     # to indicate merge with singletons
    */
       std::vector<int> interval_left_ids(points_size-1);
-      std::iota(interval_left_ids.begin(), interval_left_ids.end(), -1);  // in C++ -1 means "no id to the left"
+      std::iota(interval_left_ids.begin(), interval_left_ids.end(), -1);
+                  // in C++: -1 means "no id to the left"
 
       std::vector<int> interval_right_ids(points_size-2);
       std::iota(interval_right_ids.begin(), interval_right_ids.end(), 0);
-      interval_right_ids.push_back(-1);                                     // in C++ -1 means "no id to the right"
+      interval_right_ids.push_back(-1); // in C++: -1 means "no id to the right"
 
+      std::vector<int> left_merges(points_size - 1), right_merges(points_size - 1)
+      for (int i=0; i<points_size - 1; i++) {
+        left_merges[i] = -left_indexes(i)
+        right_merges[i] = -right_indexes(i)
+      }
 
     }  //end of the if statement
-/*
 
-    } else {   #at most 1 value in v
-      distances <- numeric(0)
+/*
+ *  } else {   #at most 1 value in v
+ *    distances <- numeric(0)
+ *  }
+ */
+
+
+/*
+ *    order_distances <- order(distances)
+ *    id_seq <- seq_along(distances)   #we compute the id sequence
+
+
+ *    merge <- matrix(nrow=points_size - 1, ncol=2)
+ *    height <- rep(0, points_size - 1)
+
+ *    for (stage in id_seq) {   #id_seq == seq_along(distances)
+ */
+
+
+  std::vector<int> order_distances(points_size-1);
+  order(distances, order_distances);
+  // matrix(0, nrow=points_size - 1, ncol=2)
+  IntegerMatrix merge(points_size - 1 , 2 );
+  // rep(0, points_size - 1)
+  NumericVector height(points_size - 1);
+
+  for (int stage = 0; stage < points_size - 1; stage++) {
+
+/*
+*      id <- id_seq[order_distances[stage]]
+*      left_id <- left_ids[id]
+*      right_id <- right_ids[id]
+*      merge[stage, ] <- c(left_merges[id], right_merges[id])
+*      height[stage] <- distances[order_distances[stage]]
+*
+*      if (left_id > 0) {
+*/
+
+    int id = order_distances[stage];
+    int left_id = interval_left_ids[id]
+    int right_id = internalval_right_ids[id]
+
+    merge[stage, 0] = left_merges[id];
+    merge[stage, 1] = right_merges[id];
+    height[stage] = distances[order_distances[stage]];
+
+    if (left_id > -1) {
+/*
+*        right_ids[left_id]    <- right_id
+*        right_merges[left_id] <- stage
+*/
+        interval_right_ids[left_id] = right_id;
+        right_merges[left_id] = stage;
+
+      }
+
+    if (right_id > -1) {
+
+        interval_left_ids[right_id] = left_id;
+        left_merges[right_id] = stage;
+      }
     }
 
+  CharacterVector labels;
+  if (points.names()==R_NilValue)) {
+    labels = points;
+  }
+  else {
+    labels = points.names();
+  }
 
-    order_distances <- order(distances)
-      id_seq <- seq_along(distances)   #we compute the id sequence
+  List ret = List::create(Named("merge")=merge, Named("height")=height, Named("order")=order_points, Named("labels")=labels, Named("method")==method)
+  ret.attr("class") = "hclust";
 
-
-      merge <- matrix(nrow=points_size - 1, ncol=2)
-      height <- rep(0, points_size - 1)
-
-      for (stage in id_seq) {   #id_seq == seq_along(distances)
-#to be precise: from the semantic POV, this line should read
-#for (stage in seq_along(distances))
-#but it just so happens, that the two are equivalent and
-#id_seq has already been computed above
-#so from the efficiency POV: the current version
-#is slightly more efficient
-
-        id <- id_seq[order_distances[stage]]
-        left_id <- left_ids[id]
-        right_id <- right_ids[id]
-
-        merge[stage, ] <- c(left_merges[id], right_merges[id])
-        height[stage] <- distances[order_distances[stage]]
-
-#cat("height =", minimum$key, ";", points[left], "..", points[right], "\n")
-
-        if (left_id > 0) {
-
-          right_ids[left_id]    <- right_id
-          right_merges[left_id] <- stage
-
-
-        }
-        if (right_id > 0) {
-
-          left_ids[right_id]    <- left_id
-          left_merges[right_id] <- stage
-
-
-        }
-      }
-
-      if (is.null(names(points))) {
-        labels <- points
-      } else {
-        labels <- names(points)
-      }
-
-      ret <- list(merge=merge, height=height, order=order_points, labels=labels, call=match.call(), method=method)
-        class(ret) <- "hclust"
-*/
-  List ret;
   return ret;
 }
