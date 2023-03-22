@@ -29,7 +29,9 @@ void order(std::vector<double> & data, std::vector<int> & index) {
   );
 }
 
-// [[Rcpp::export]]
+
+
+// [[Rcpp::export(.hclust1d_single)]]
 List hclust1d_single(NumericVector points) {
 // only single linkage case,
 // which doesn't need a heap because the cluster distances are the same as singleton distances
@@ -47,7 +49,15 @@ List hclust1d_single(NumericVector points) {
 /*
  * if (length(points) >= 2) {
  */
+
+  if (points_size == 0)
+    stop("no points");
+
   std::vector<double> distances;
+  std::vector<int> interval_left_ids(points_size-1);
+  std::vector<int> interval_right_ids(points_size-2);
+  std::vector<int> left_merges(points_size - 1);
+  std::vector<int> right_merges(points_size - 1);
   if (points_size >= 2) {
 
   /*
@@ -107,18 +117,16 @@ List hclust1d_single(NumericVector points) {
    * left_merges  <- -left_indexes      # minus as in original hclust implementation
    * right_merges <- -right_indexes     # to indicate merge with singletons
    */
-      std::vector<int> interval_left_ids(points_size-1);
+
       std::iota(interval_left_ids.begin(), interval_left_ids.end(), -1);
                   // in C++: -1 means "no id to the left"
 
-      std::vector<int> interval_right_ids(points_size-2);
       std::iota(interval_right_ids.begin(), interval_right_ids.end(), 0);
       interval_right_ids.push_back(-1); // in C++: -1 means "no id to the right"
 
-      std::vector<int> left_merges(points_size - 1), right_merges(points_size - 1)
       for (int i=0; i<points_size - 1; i++) {
-        left_merges[i] = -left_indexes(i)
-        right_merges[i] = -right_indexes(i)
+        left_merges[i] = -left_indexes(i);
+        right_merges[i] = -right_indexes(i);
       }
 
     }  //end of the if statement
@@ -162,11 +170,11 @@ List hclust1d_single(NumericVector points) {
 */
 
     int id = order_distances[stage];
-    int left_id = interval_left_ids[id]
-    int right_id = internalval_right_ids[id]
+    int left_id = interval_left_ids[id];
+    int right_id = interval_right_ids[id];
 
-    merge[stage, 0] = left_merges[id];
-    merge[stage, 1] = right_merges[id];
+    merge(stage, 0) = left_merges[id];
+    merge(stage, 1) = right_merges[id];
     height[stage] = distances[order_distances[stage]];
 
     if (left_id > -1) {
@@ -175,26 +183,26 @@ List hclust1d_single(NumericVector points) {
 *        right_merges[left_id] <- stage
 */
         interval_right_ids[left_id] = right_id;
-        right_merges[left_id] = stage;
+        right_merges[left_id] = stage + 1;
 
       }
 
     if (right_id > -1) {
 
         interval_left_ids[right_id] = left_id;
-        left_merges[right_id] = stage;
+        left_merges[right_id] = stage + 1;
       }
     }
 
   CharacterVector labels;
-  if (points.names()==R_NilValue)) {
+  if (points.attr("names") == R_NilValue) {
     labels = points;
   }
   else {
     labels = points.names();
   }
 
-  List ret = List::create(Named("merge")=merge, Named("height")=height, Named("order")=order_points, Named("labels")=labels, Named("method")==method)
+  List ret = List::create(Named("merge")=merge, Named("height")=height, Named("order")=order_points, Named("labels")=labels, Named("method")="single");
   ret.attr("class") = "hclust";
 
   return ret;
