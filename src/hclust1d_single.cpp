@@ -32,7 +32,7 @@ void order(std::vector<double> & data, std::vector<int> & index) {
 
 
 // [[Rcpp::export(.hclust1d_single)]]
-List hclust1d_single(NumericVector points) {
+List hclust1d_single(NumericVector & points) {
 // only single linkage case,
 // which doesn't need a heap because the cluster distances are the same as singleton distances
 
@@ -41,6 +41,7 @@ List hclust1d_single(NumericVector points) {
  */
 
   int points_size = points.size();
+
   std::vector<int> order_points(points_size);
   order(points, order_points);
 
@@ -51,7 +52,7 @@ List hclust1d_single(NumericVector points) {
  */
 
   if (points_size < 2)
-    stop("at least two objects are needed to analyse clusters");
+    stop("at least two objects are needed to analyse clusters with hclust1d.");
 
 /*
 *  count <- length(points)

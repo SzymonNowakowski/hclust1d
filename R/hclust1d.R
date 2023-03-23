@@ -15,11 +15,17 @@
 #'
 #' @export hclust1d
 
-hclust1d <- function(points, method = "single") {
+hclust1d <- function(x, distance = FALSE, method = "single") {
   #dispatch is written in R, because I don't know how to execute do.call() from Rcpp
 
+  if (!is.numeric(x))
+    stop("x must be numeric vector or distance matrix")
+
+  if (!is.logical(distance) | length(distance)!=1)
+    stop("distance must be a logical scalar")
+
   if (method == "single") {
-    ret <- .hclust1d_single(points)
+    ret <- .hclust1d_single(x, dist)
     ret$call <- match.call()
     return(ret)
   } else {

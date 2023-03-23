@@ -11,12 +11,12 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // hclust1d_single
-List hclust1d_single(NumericVector points);
+List hclust1d_single(NumericVector& points);
 RcppExport SEXP _hclust1d_hclust1d_single(SEXP pointsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type points(pointsSEXP);
+    Rcpp::traits::input_parameter< NumericVector& >::type points(pointsSEXP);
     rcpp_result_gen = Rcpp::wrap(hclust1d_single(points));
     return rcpp_result_gen;
 END_RCPP
