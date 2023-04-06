@@ -51,7 +51,23 @@ expect_some_equalities <- function(res_1, res_2) {
 expect_all_equalities <- function(res_1d, res_1d_alt, res_1d_dist) {
   expect_some_equalities(res_1d, res_1d_dist)
   expect_some_equalities(res_1d_alt, res_1d_dist)
-  if (res_1d$merge[1,1] == res_1d_dist$merge[1,1]) {  #wild swing of luck here!
+
+  compare_alt <- TRUE
+  if (nrow(res_1d$merge) == 1 & res_1d$merge[1,1] == res_1d_dist$merge[1,1] & res_1d$merge[1,2] == res_1d_dist$merge[1,2]) {
+    compare_alt <- FALSE
+  }
+  if (nrow(res_1d$merge) == 2) if (res_1d$merge[1,1] == res_1d_dist$merge[1,1] & res_1d$merge[1,2] == res_1d_dist$merge[1,2] &
+      res_1d$merge[2,1] == res_1d_dist$merge[2,1] & res_1d$merge[2,2] == res_1d_dist$merge[2,2]) {
+    compare_alt <- FALSE
+  }
+  if (nrow(res_1d$merge) >= 3) if (res_1d$merge[1,1] == res_1d_dist$merge[1,1] & res_1d$merge[1,2] == res_1d_dist$merge[1,2] &
+      res_1d$merge[2,1] == res_1d_dist$merge[2,1] & res_1d$merge[2,2] == res_1d_dist$merge[2,2] &
+      res_1d$merge[3,1] == res_1d_dist$merge[3,1] & res_1d$merge[3,2] == res_1d_dist$merge[3,2]) {
+    compare_alt <- FALSE
+  }
+
+  if (!compare_alt) {
+    #wild swing of luck here!
     expect_equal(res_1d$merge, res_1d_dist$merge)
   } else {
     expect_equal(res_1d_alt$merge, res_1d_dist$merge)

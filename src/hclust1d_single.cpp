@@ -3,8 +3,6 @@
 #include <assert.h>
 using namespace Rcpp;
 
-// [[Rcpp::plugins("cpp11")]]
-
 void order(NumericVector & data, std::vector<int> & index) {
   //https://stackoverflow.com/questions/17554242/how-to-obtain-the-index-permutation-after-the-sorting
 

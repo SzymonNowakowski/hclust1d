@@ -1,17 +1,17 @@
-#' @title Hierarchical CLUSTering for 1D
+#' @title Hierarchical Clustering for 1D
 #'
-#' @description Univariational hierarchical agglomerative clustering  with a few possible choices of a linkage function.
+#' @description Univariate hierarchical agglomerative clustering  with a few possible choices of a linkage function.
 #'
 #' @param x a vector of 1D points to be clustered, or a distance structure as produced by \code{dist}.
 #' @param distance a logical value indicating, whether \code{x} is a vector of 1D points to be clustered (\code{distance=FALSE}, the default), or a distance structure (\code{distance=TRUE}, the default).
 #' @param method linkage method, currently only "single" is supported.
 #'
-#' @details If \code{x} is a distance matrix, at first a conformant vector of 1D points is computed (with arbitrary shift and sign choices). The supported methods for \code{dist} are
+#' @details If \code{x} is a distance matrix, at first a conforming vector of 1D points is computed (with arbitrary shift and sign choices). The supported methods for \code{dist} are
 #' the following: \code{"euclidean"}, \code{"maximum"}, \code{"manhattan"}, \code{"minkowski"}.
 #'
-#' Univariational hierarchical clustering is performed
+#' Univariate hierarchical clustering is performed
 #' for the provided or calculated vector of points: initially, each point is assigned its own \emph{singleton} cluster, and
-#' then the clusters get iteratively merged.
+#' then the clusters get merged with their nearest neighbours, two at a time.
 #'
 #' For \code{method="single"} there is no need to recompute distances,
 #' as the original inter-point distances are also the inter cluster distances, so the algorithm requires
@@ -62,7 +62,7 @@ hclust1d <- function(x, distance = FALSE, method = "single") {
       stop(error_2_points);
 
     if (points_size*(points_size - 1) / 2L != length(x)) {   #read more at https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/dist
-      stop("nonconformat shape of the provided distance matrix with a dist-typed S3 object")
+      stop("nonconforming shape of the provided distance matrix with a dist-typed S3 object")
     }
 
     dist_method <- attr(x, "method")

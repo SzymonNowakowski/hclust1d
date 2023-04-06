@@ -1,4 +1,4 @@
-#' hclust1d: hclust1d (Hierarchical CLUSTering for 1D) is a suit of algorithms for univariational agglomerative hierarchical clustering  (with a few possible choices of a linkage function) in O(n*log n) time. The better algorithmic time complexity is paired with an efficient C++ implementation.
+#' hclust1d: hclust1d (Hierarchical CLUSTering for 1D) is a suit of algorithms for univariate agglomerative hierarchical clustering  (with a few possible choices of a linkage function) in O(n*log n) time. The better algorithmic time complexity is paired with an efficient C++ implementation.
 #'
 #' @docType package
 #' @name hclust1d

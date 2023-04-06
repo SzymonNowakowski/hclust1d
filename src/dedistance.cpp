@@ -3,9 +3,6 @@
 #include <cmath>        // std::abs
 using namespace Rcpp;
 
-// [[Rcpp::plugins("cpp11")]]
-
-
 // [[Rcpp::export(.dedistance)]]
 NumericVector dedistance(NumericVector & distances, int points_size) {
   //input a dist structure and return the points. Points and their direction (=sign) are arbitrarily chosen

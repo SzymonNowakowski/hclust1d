@@ -3,7 +3,7 @@
 \docType{package}
 \name{hclust1d}
 \alias{hclust1d}
-\title{Hierarchical CLUSTering for 1D}
+\title{Hierarchical Clustering for 1D}
 \usage{
 hclust1d(x, distance = FALSE, method = "single")
 }
@@ -27,15 +27,15 @@ Otherwise, a positive value, say $j$, of an element in $i$-th row indicate that 
 \item{dist.method}{the distance method used in building the distance matrix, or \code{"euclidean"} if \code{x} is a vector of 1D points}
 }
 \description{
-Univariational hierarchical agglomerative clustering  with a few possible choices of a linkage function.
+Univariate hierarchical agglomerative clustering  with a few possible choices of a linkage function.
 }
 \details{
-If \code{x} is a distance matrix, at first a conformant vector of 1D points is computed (with arbitrary shift and sign choices). The supported methods for \code{dist} are
+If \code{x} is a distance matrix, at first a conforming vector of 1D points is computed (with arbitrary shift and sign choices). The supported methods for \code{dist} are
 the following: \code{"euclidean"}, \code{"maximum"}, \code{"manhattan"}, \code{"minkowski"}.
 
-Univariational hierarchical clustering is performed
+Univariate hierarchical clustering is performed
 for the provided or calculated vector of points: initially, each point is assigned its own \emph{singleton} cluster, and
-then the clusters get iteratively merged.
+then the clusters get merged with their nearest neighbours, two at a time.
 
 For \code{method="single"} there is no need to recompute distances,
 as the original inter-point distances are also the inter cluster distances, so the algorithm requires
