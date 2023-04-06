@@ -1,32 +1,62 @@
 set.seed(0)
 
-test_that("points length 0 should fail", {
+test_that("points  and distance length 0 and 1 should fail", {
   expect_error(hclust1d(numeric(0), method="single"))
-})
-
-test_that("points length 1 should fail", {
   expect_error(hclust1d(1, method="single"))
+  expect_error(hclust1d(dist(numeric(0)), distance = TRUE, method="single"))
+  expect_error(hclust1d(dist(numeric(1)), distance = TRUE, method="single"))
 })
 
 test_that("non-numerical points should fail", {
   expect_error(hclust1d("x", method="single"))
 })
 
-test_that("distance not logical should fail", {
+test_that("distance not logical or not scalar should fail", {
   expect_error(hclust1d(c(1, 2, 3), distance="yes", method="single"))
+  expect_error(hclust1d(c(1, 2, 3), distance=c(TRUE, TRUE), method="single"))
 })
 
-test_that("distance not scalar should fail", {
-  expect_error(hclust1d(c(1, 2, 3), distance=c(T, T), method="single"))
+test_that("distance matrix not S3 dist class should fail", {
+  expect_error(hclust1d(as.matrix(dist(c(1, 2, 3))), distance=TRUE, method="single"))
 })
 
-expect_some_equalities <- function(res_1d, res_md) {
-  expect_equal(res_1d$dist.method, res_md$dist.method)
-  expect_equal(res_1d$method, res_md$method)
-  expect_equal(nrow(res_1d$merge), nrow(res_md$merge))
-  expect_equal(res_1d$height, res_md$height)
 
-  expect_s3_class(res_1d, class(res_md))
+test_that("checking distance types", {
+  #distance method should get carried over to hclust1d result
+  for (dist_method in c("euclidean", "maximum", "manhattan", "minkowski"))
+    expect_equal(hclust1d(dist(c(1, 2, 3), method=dist_method), distance=TRUE, method="single")$dist.method, dist_method)
+
+  #hclust1d should fail on those two dist_methods
+  for (dist_method in c("canberra", "binary"))
+    expect_error(hclust1d(dist(c(1, 2, 3), method=dist_method), distance=TRUE, method="single"))
+
+})
+
+test_that("should preserve names or values or indices of points", {
+  expect_equal(hclust1d(c(one=1, two=2, three=-3), method="single")$labels, c("one", "two", "three"))
+  expect_equal(hclust1d(c(1.1, 2.3, -2.2), method="single")$labels, c("1.1", "2.3", "-2.2"))
+  expect_equal(hclust1d(dist(c(one=1, two=2, three=-3)), distance=TRUE, method="single")$labels, c("one", "two", "three"))
+  expect_equal(hclust1d(dist(c(1.1, 2.3, -2.2)), distance=TRUE, method="single")$labels, c("1", "2", "3"))
+})
+
+expect_some_equalities <- function(res_1, res_2) {
+  expect_equal(res_1$dist.method, res_2$dist.method)
+  expect_equal(res_1$method, res_2$method)
+  expect_equal(nrow(res_1$merge), nrow(res_2$merge))
+  expect_equal(res_1$height, res_2$height)
+
+  expect_s3_class(res_1, class(res_2))
+}
+
+expect_all_equalities <- function(res_1d, res_1d_alt, res_1d_dist) {
+  expect_some_equalities(res_1d, res_1d_dist)
+  expect_some_equalities(res_1d_alt, res_1d_dist)
+  if (res_1d$merge[1,1] == res_1d_dist$merge[1,1]) {  #wild swing of luck here!
+    expect_equal(res_1d$merge, res_1d_dist$merge)
+  } else {
+    expect_equal(res_1d_alt$merge, res_1d_dist$merge)
+  }
+
 }
 
 repetitions <- 1:5
@@ -37,8 +67,11 @@ test_that("equality of results with hclust, a vector without repetitions", {
     for (j in repetitions) {
       x <- rnorm(len)
       res_1d <- hclust1d(x, method="single")
+      res_1d_dist <- hclust1d(dist(x), distance = TRUE, method="single")
+      res_1d_alt <- hclust1d(-x, method="single")
       res_md <- stats::hclust(dist(x), method="single")
 
+      expect_all_equalities(res_1d, res_1d_alt, res_1d_dist)
       expect_some_equalities(res_1d, res_md)
 
       for (i in 1:nrow(res_1d$merge))
@@ -67,8 +100,11 @@ test_that("equality of results with hclust, a vector with double repetitions", {
       x <- new_x[shuffle_vector]
 
       res_1d <- hclust1d(x, method="single")
+      res_1d_dist <- hclust1d(dist(x), distance = TRUE, method="single")
+      res_1d_alt <- hclust1d(-x, method="single")
       res_md <- stats::hclust(dist(x), method="single")
 
+      expect_all_equalities(res_1d, res_1d_alt, res_1d_dist)
       expect_some_equalities(res_1d, res_md)
 
       #because of many heights==0 merge levels, we don't know the order of singleton merge. Fix it
@@ -166,8 +202,11 @@ test_that("equality of results with hclust, a vector with triple repetitions", {
       x_indices <- new_x_indices[shuffle_vector]
 
       res_1d <- hclust1d(x, method="single")
-      res_md <- hclust(dist(x), method="single")
+      res_1d_dist <- hclust1d(dist(x), distance = TRUE, method="single")
+      res_1d_alt <- hclust1d(-x, method="single")
+      res_md <- stats::hclust(dist(x), method="single")
 
+      expect_all_equalities(res_1d, res_1d_alt, res_1d_dist)
       expect_some_equalities(res_1d, res_md)
 
 

@@ -12,7 +12,7 @@ hclust1d(x, distance = FALSE, method = "single")
 
 \item{distance}{a logical value indicating, whether \code{x} is a vector of 1D points to be clustered (\code{distance=FALSE}, the default), or a distance structure (\code{distance=TRUE}, the default).}
 
-\item{method}{linkage method, one of "single"}
+\item{method}{linkage method, currently only "single" is supported.}
 }
 \value{
 An object with S3 class \code{"hclust"}, compatible with a regular \code{stats::hclust} output:
@@ -21,16 +21,20 @@ at this step, the value of the element is negative and its absolute value indica
 Otherwise, a positive value, say $j$, of an element in $i$-th row indicate that at the stage $i$ a cluster created at a previous stage $j$ was merged.}
 \item{height}{a vector with $n-1$ values, with the $i$-th value indicating the distance between the two clusters merged at the stage $i$.}
 \item{order}{a permutation of the original points sorting them in an increasing order.}
-\item{labels}{either point names, if available, or point values.}
+\item{labels}{either point names, or point values, or point indices, in the order of availability.}
 \item{call}{the call which produced the results.}
 \item{method}{the linkage method used for clustering.}
+\item{dist.method}{the distance method used in building the distance matrix, or \code{"euclidean"} if \code{x} is a vector of 1D points}
 }
 \description{
 Univariational hierarchical agglomerative clustering  with a few possible choices of a linkage function.
 }
 \details{
-If \code{x} is a distance matrix, at first the vector of 1D points is computed (with an arbitrary shift). Univariational hierarchical clustering is performed
-for the provided vector of points: initially, each point is assigned its own \emph{singleton} cluster, and
+If \code{x} is a distance matrix, at first a conformant vector of 1D points is computed (with arbitrary shift and sign choices). The supported methods for \code{dist} are
+the following: \code{"euclidean"}, \code{"maximum"}, \code{"manhattan"}, \code{"minkowski"}.
+
+Univariational hierarchical clustering is performed
+for the provided or calculated vector of points: initially, each point is assigned its own \emph{singleton} cluster, and
 then the clusters get iteratively merged.
 
 For \code{method="single"} there is no need to recompute distances,
@@ -38,7 +42,7 @@ as the original inter-point distances are also the inter cluster distances, so t
 only sorting the original points and then sorting the distances.
 
 For other linkage methods, two distances (between the merged cluster and the preceding and the following clusters) get recomputed at each merge, and the resulting
-distance structure gets updated in an effciently implemented heap providing a priority queue functionality (the access to the current minimum distance) in O(log n) time at each step.
+distance structure gets updated in an efficiently implemented heap providing a priority queue functionality (the access to the current minimum distance) in O(log n) time at each step.
 The resulting algorithm has O(n*log n) time complexity.
 }
 \examples{
