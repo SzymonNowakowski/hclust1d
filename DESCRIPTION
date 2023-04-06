@@ -1,6 +1,6 @@
 Package: hclust1d
 Title: Hierarchical Clustering of Univariate (1D) Data
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     person("Szymon", "Nowakowski", email = "s.nowakowski@mimuw.edu.pl", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1939-9512"))
 Description: hclust1d (Hierarchical CLUSTering for 1D) is a suit of algorithms for univariational agglomerative  hierarchical clustering  (with a few possible choices of a linkage function) in O(n*log n) time. The better algorithmic time complexity is paired with an efficient C++ implementation.
