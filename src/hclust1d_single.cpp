@@ -174,6 +174,7 @@ List hclust1d_single(NumericVector & points) {
 
     merge(stage, 0) = left_merges[id];
     merge(stage, 1) = right_merges[id];
+
     height[stage] = distances[order_distances[stage]];
 
     if (left_id > -1) {
@@ -201,7 +202,10 @@ List hclust1d_single(NumericVector & points) {
     labels = points.names();
   }
 
-  List ret = List::create(Named("merge")=merge, Named("height")=height, Named("order")=order_points, Named("labels")=labels, Named("method")="single");
+  for (int i=0; i<points_size; i++)
+    order_points[i]++;    //make it R conformant
+
+  List ret = List::create(Named("merge")=merge, Named("height")=height, Named("order")=order_points, Named("labels")=labels, Named("method")="single", Named("dist.method")="euclidean");
   ret.attr("class") = "hclust";
 
   return ret;
