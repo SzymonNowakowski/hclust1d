@@ -1,4 +1,18 @@
 
+# This is a 2nd resubmission of 0.0.1
+
+- The following NOTEs from precheck **has been corrected**:
+
+   1. Package has a VignetteBuilder field but no prebuilt vignette index.
+
+   1. The Title field should be in title case. Current version is:
+   'Hierarchical Clustering of Univariate (1D) Data'
+   In title case that is:
+   'Hierarchical Clustering of Univariate (1d) Data'
+
+   1. The Description field should not start with the package name,
+     'This package' or similar.
+
 # Local checks
 
 ## local R CMD check results
