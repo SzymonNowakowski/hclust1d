@@ -1,5 +1,5 @@
 
-# This is a 2nd resubmission of 0.0.1
+# This is a resubmission of 0.0.1
 
 - The following NOTEs from precheck **has been corrected**:
 
