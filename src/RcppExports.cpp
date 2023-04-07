@@ -45,11 +45,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// heap_experiments
+void heap_experiments();
+RcppExport SEXP _hclust1d_heap_experiments() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    heap_experiments();
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_hclust1d_dedistance", (DL_FUNC) &_hclust1d_dedistance, 2},
     {"_hclust1d_hclust1d_heapbased", (DL_FUNC) &_hclust1d_hclust1d_heapbased, 2},
     {"_hclust1d_hclust1d_single", (DL_FUNC) &_hclust1d_hclust1d_single, 1},
+    {"_hclust1d_heap_experiments", (DL_FUNC) &_hclust1d_heap_experiments, 0},
     {NULL, NULL, 0}
 };
 

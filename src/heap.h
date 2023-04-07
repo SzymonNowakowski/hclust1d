@@ -21,7 +21,6 @@ struct heap {
   std::vector<double> keys;
   std::vector<int> ids;
   std::vector<int> reverse_lookup;
-  int element_cnt;
 };
 
 struct heap init_heap(std::vector<double> keys);

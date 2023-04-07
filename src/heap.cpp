@@ -1,4 +1,5 @@
 #include "heap.h"
+#include <iostream>
 
 /*
  *                          a custom heap implementation
@@ -19,8 +20,8 @@ int left(int i) { return 2*i+1; }
 int right(int i) { return 2*i+2; }
 int parent(int i) { return (i-1)/2; }
 
-void remove_all(struct heap & h) { h.element_cnt = 0; }
-int size(struct heap & h) { return h.element_cnt; }
+void remove_all(struct heap & h) { h.keys.clear(); h.ids.clear(); }
+int size(struct heap & h) { return h.keys.size(); }
 bool is_empty(struct heap & h) { return size(h) == 0; }
 
 std::pair<double, int> read_minimum(struct heap & h) {
@@ -72,17 +73,14 @@ void heapify_up(struct heap & h, int i) {
 
 int insert(struct heap & h, double key) {
 // returning the id of the inserted key
-  h.element_cnt++;
 
-  h.keys.push_back(key);
-  h.reverse_lookup.push_back(h.element_cnt);
+  h.keys.push_back(key);                           //push_back is safe reallocation-wise
+  h.reverse_lookup.push_back(h.keys.size()-1);
+  h.ids.push_back(h.reverse_lookup.size()-1);
 
-  int id = h.reverse_lookup.size()-1;
+  heapify_up(h, size(h) -1);
 
-  h.ids.push_back(id);
-  heapify_up(h, h.element_cnt);
-
-  return id;
+  return h.reverse_lookup.size()-1;
 }
 
 
@@ -94,14 +92,15 @@ void heapify_down(struct heap & h, int i) {
   int l = left(i);
   int r = right(i);
 
-
   int minimal = i;
 
-  if (l <= size(h) and h.keys[l] < h.keys[minimal])
-    minimal = l;
+  if (l < size(h))
+    if (h.keys[l] < h.keys[minimal])
+      minimal = l;
 
-  if (r <= size(h) and h.keys[r] < h.keys[minimal])
-    minimal = r;
+  if (r < size(h))
+    if (h.keys[r] < h.keys[minimal])
+      minimal = r;
 
   if (minimal != i) {
     switch_node(h, i, minimal);
@@ -110,12 +109,14 @@ void heapify_down(struct heap & h, int i) {
 }
 
 std::pair<double, int> remove_minimum(struct heap & h) {
-  std::pair<double, int> r = read_minimum(h);    //it does all the error checking, too
-  if (size(h) == 1)
-     remove_all(h);
+  std::pair<double, int> r = read_minimum(h);
+  if (size(h) <= 1)
+    remove_all(h);
   else {
     switch_node(h, 0, size(h)-1);
-    h.element_cnt--;
+    h.keys.pop_back();
+    h.ids.pop_back();
+
     heapify_down(h, 0);
   }
   return r;
@@ -123,16 +124,17 @@ std::pair<double, int> remove_minimum(struct heap & h) {
 
 struct heap init_heap(std::vector<double> keys) {
 //pass by value the keys because they get assigned and rearanged
+//the ids associated with keys are 0 .. keys.size() - 1
+//please note, that the returned heap may have the ids field rearranged and not in this sequence
 
   struct heap h;
   h.keys = keys;
-  h.element_cnt = keys.size();
-  h.ids = std::vector<int>(h.element_cnt);
+  h.ids = std::vector<int>(h.keys.size());
   std::iota(h.ids.begin(), h.ids.end(), 0);
-  h.reverse_lookup = std::vector<int>(h.element_cnt);
+  h.reverse_lookup = std::vector<int>(h.keys.size());
   std::iota(h.reverse_lookup.begin(), h.reverse_lookup.end(), 0);
 
-  for (int i = parent(h.element_cnt - 1); i>=0; i--)   //parent of the last element is the first one
+  for (int i = parent(size(h) - 1); i>=0; i--)   //parent of the last element is the first one
     heapify_down(h, i);                                 //which may need a rebuild
                                                         //it is safe, as for cnt==0, parent==-1
                                                         //               for cnt==1, parent==-1
@@ -158,4 +160,25 @@ void update_key_by_id(struct heap & h, int id, double new_key) {
 
   heapify_down(h, index);
   heapify_up(h, index);
+}
+
+// [[Rcpp::export()]]
+void heap_experiments() {
+  std::vector<double> x = {3,4,5, -3};
+  std::cout << x[1] <<"\n";
+
+  struct heap h = init_heap(x);
+
+  insert(h, -1);
+
+  std::pair<double, int> p = remove_minimum(h);
+  std::cout << p.first << " "<< p. second <<"\n";
+
+  for (int i=0; i<900; i++)
+    insert(h, i);
+
+  for (int i=0; i<910; i++) {
+    p = remove_minimum(h);
+    std::cout << p.first << " "<< p. second <<"\n";
+  }
 }
