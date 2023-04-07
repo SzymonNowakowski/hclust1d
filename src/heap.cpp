@@ -1,6 +1,4 @@
-#include <vector>  //std::vector
-#include <numeric> //std::iota
-
+#include "heap.h"
 
 /*
  *                          a custom heap implementation
@@ -8,21 +6,18 @@
  * in addition to std::heap it provides the following functionalities:
  *
  * * reverse_lookup for updating key by id
- * * ability to heapify both down and up the tree
+ * * ability to heapify both down and up the tree for updating
+ *   (both increasing and decreasing) a key in a middle of a tree
  *
  */
 
-//first some housecleaning functions enabling us access on a vector via tree relations
+
+
+//first some housekeeping functions enabling us access on a vector via tree relations
+//with 0-based indexing
 int left(int i) { return 2*i+1; }
 int right(int i) { return 2*i+2; }
 int parent(int i) { return (i-1)/2; }
-
-struct heap {
-  std::vector<double> keys;
-  std::vector<int> ids;
-  std::vector<int> reverse_lookup;
-  int element_cnt;
-};
 
 void remove_all(struct heap & h) { h.element_cnt = 0; }
 int size(struct heap & h) { return h.element_cnt; }
@@ -126,10 +121,10 @@ std::pair<double, int> remove_minimum(struct heap & h) {
   return r;
 }
 
-std::vector<int> init_heap(struct heap & h, std::vector<double> keys) {
-//returning the ids of inserted keys (to enable update_by_id later on)
-//pass by value the keys because they get rearanged
+struct heap init_heap(std::vector<double> keys) {
+//pass by value the keys because they get assigned and rearanged
 
+  struct heap h;
   h.keys = keys;
   h.element_cnt = keys.size();
   h.ids = std::vector<int>(h.element_cnt);
@@ -142,9 +137,7 @@ std::vector<int> init_heap(struct heap & h, std::vector<double> keys) {
                                                         //it is safe, as for cnt==0, parent==-1
                                                         //               for cnt==1, parent==-1
                                                         //trigerring an empty loop
-
-
-  return h.ids;
+  return h;
 }
 
 double read_key_by_id(struct heap & h, int id) {

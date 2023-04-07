@@ -50,3 +50,6 @@ dendrogram <- hclust1d(rnorm(100))
 plot(dendrogram)
 
 }
+\seealso{
+\code{\link[=supported_methods]{supported_methods()}} for listing all currently supported linkage methods.
+}

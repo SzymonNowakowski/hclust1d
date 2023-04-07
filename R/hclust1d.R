@@ -31,6 +31,9 @@
 #' \item{call}{the call which produced the results.}
 #' \item{method}{the linkage method used for clustering.}
 #' \item{dist.method}{the distance method used in building the distance matrix, or \code{"euclidean"} if \code{x} is a vector of 1D points}
+#'
+#' @seealso [supported_methods()] for listing all currently supported linkage methods.
+#'
 #' @examples
 #' dendrogram <- hclust1d(rnorm(100))
 #' plot(dendrogram)
@@ -75,12 +78,17 @@ hclust1d <- function(x, distance = FALSE, method = "single") {
     x <- .dedistance(x, points_size)
   }
 
+  if (length(x) < 2)
+    stop(error_2_points);
+
   if (method == "single") {
 
-    if (length(x) < 2)
-      stop(error_2_points);
-
     ret <- .hclust1d_single(x)
+    ret$call <- match.call()
+
+  } else if (method %in% supported_methods()) {
+
+    ret <- .hclust1d_heapbased(x, pmatch(method, supported_methods()))
     ret$call <- match.call()
 
   } else {
