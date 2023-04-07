@@ -1,4 +1,7 @@
 
+# hclust1d 0.0.1.9001
+
+- Started work on adding average linkage support
 
 # hclust1d 0.0.1.9000
 
