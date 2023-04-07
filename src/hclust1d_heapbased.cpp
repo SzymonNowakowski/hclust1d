@@ -9,7 +9,7 @@ using namespace Rcpp;
 // [[Rcpp::export(.hclust1d_heapbased)]]
 List hclust1d_heapbased(NumericVector & points, int method) {
 // general linkage case with a heap
-// methods: 2 - complete
+// methods: 1 - complete
 
   int points_size = points.size();
 
@@ -92,7 +92,7 @@ List hclust1d_heapbased(NumericVector & points, int method) {
         interval_right_ids[left_id] = right_id;
         right_merges[left_id] = stage + 1;
 
-        if (method == 2)  //complete linkage
+        if (method == 1)  //complete linkage
           update_key_by_id(priority_queue, left_id, points[right_indexes[left_id]] - points[left_indexes[left_id]]);
       }
 
@@ -101,7 +101,7 @@ List hclust1d_heapbased(NumericVector & points, int method) {
         interval_left_ids[right_id] = left_id;
         left_merges[right_id] = stage + 1;
 
-        if (method == 2)  //complete linkage
+        if (method == 1)  //complete linkage
           update_key_by_id(priority_queue, right_id, points[right_indexes[right_id]] - points[left_indexes[right_id]]);
       }
     }
