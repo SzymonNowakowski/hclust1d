@@ -1,7 +1,8 @@
-set.seed(0)
+
 
 
 test_that("points  and distance length 0 and 1 should fail", {
+  set.seed(0)
   for (tested_method in supported_methods()) {
     expect_error(hclust1d(numeric(0), method=tested_method))
     expect_error(hclust1d(1, method=tested_method))
