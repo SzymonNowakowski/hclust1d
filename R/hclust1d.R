@@ -4,7 +4,7 @@
 #'
 #' @param x a vector of 1D points to be clustered, or a distance structure as produced by \code{dist}.
 #' @param distance a logical value indicating, whether \code{x} is a vector of 1D points to be clustered (\code{distance=FALSE}, the default), or a distance structure (\code{distance=TRUE}, the default).
-#' @param method linkage method, currently only "single" is supported.
+#' @param method linkage method, with \code{"complete"} as a default.
 #'
 #' @details If \code{x} is a distance matrix, at first a conforming vector of 1D points is computed (with arbitrary shift and sign choices). The supported methods for \code{dist} are
 #' the following: \code{"euclidean"}, \code{"maximum"}, \code{"manhattan"}, \code{"minkowski"}.
@@ -32,7 +32,7 @@
 #' \item{method}{the linkage method used for clustering.}
 #' \item{dist.method}{the distance method used in building the distance matrix, or \code{"euclidean"} if \code{x} is a vector of 1D points}
 #'
-#' @seealso [supported_methods()] for listing all currently supported linkage methods.
+#' @seealso [supported_methods()] for listing of all currently supported linkage methods.
 #'
 #' @examples
 #' dendrogram <- hclust1d(rnorm(100))
@@ -40,7 +40,7 @@
 #'
 #' @export hclust1d
 
-hclust1d <- function(x, distance = FALSE, method = "single") {
+hclust1d <- function(x, distance = FALSE, method = "complete") {
   #dispatch is written in R, because I don't know how to execute do.call() from Rcpp
 
   error_2_points<- "at least two objects are needed to analyse clusters with hclust1d"
@@ -90,9 +90,10 @@ hclust1d <- function(x, distance = FALSE, method = "single") {
 
     ret <- .hclust1d_heapbased(x, pmatch(method, supported_methods()))
     ret$call <- match.call()
+    ret$method <- method
 
   } else {
-    stop(paste("linkage", method, "not supported in the current version of hclust1d."))
+    stop(paste("linkage", method, "not supported in the current version of hclust1d. See supported_methods() for more information"))
   }
 
   if (distance)  #override the dist.method for distance-based computations

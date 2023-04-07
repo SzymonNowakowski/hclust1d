@@ -102,7 +102,7 @@ List hclust1d_heapbased(NumericVector & points, int method) {
         left_merges[right_id] = stage + 1;
 
         if (method == 2)  //complete linkage
-          update_key_by_id(priority_queue, right_id, points[right_indexes[right_id]] - points[right_indexes[left_id]]);
+          update_key_by_id(priority_queue, right_id, points[right_indexes[right_id]] - points[left_indexes[right_id]]);
       }
     }
 
@@ -117,7 +117,7 @@ List hclust1d_heapbased(NumericVector & points, int method) {
   for (int i=0; i<points_size; i++)
     order_points[i]++;    //make it R conformant
 
-  List ret = List::create(Named("merge")=merge, Named("height")=height, Named("order")=order_points, Named("labels")=labels, Named("method")="single", Named("dist.method")="euclidean");
+  List ret = List::create(Named("merge")=merge, Named("height")=height, Named("order")=order_points, Named("labels")=labels, Named("method")="to_be_overwritten", Named("dist.method")="euclidean");
   ret.attr("class") = "hclust";
 
   return ret;

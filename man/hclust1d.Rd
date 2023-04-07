@@ -5,14 +5,14 @@
 \alias{hclust1d}
 \title{Hierarchical Clustering for 1D}
 \usage{
-hclust1d(x, distance = FALSE, method = "single")
+hclust1d(x, distance = FALSE, method = "complete")
 }
 \arguments{
 \item{x}{a vector of 1D points to be clustered, or a distance structure as produced by \code{dist}.}
 
 \item{distance}{a logical value indicating, whether \code{x} is a vector of 1D points to be clustered (\code{distance=FALSE}, the default), or a distance structure (\code{distance=TRUE}, the default).}
 
-\item{method}{linkage method, currently only "single" is supported.}
+\item{method}{linkage method, with \code{"complete"} as a default.}
 }
 \value{
 An object with S3 class \code{"hclust"}, compatible with a regular \code{stats::hclust} output:
@@ -51,5 +51,5 @@ plot(dendrogram)
 
 }
 \seealso{
-\code{\link[=supported_methods]{supported_methods()}} for listing all currently supported linkage methods.
+\code{\link[=supported_methods]{supported_methods()}} for listing of all currently supported linkage methods.
 }

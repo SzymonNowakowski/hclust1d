@@ -3,6 +3,7 @@
 # hclust1d 0.0.1.9000
 
 - Adding a heap implementation of priority que with key update by id
+- Adding complete linkage support
 
 # hclust1d 0.0.1
 
