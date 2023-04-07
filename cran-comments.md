@@ -5,12 +5,12 @@
 
    1. Package has a VignetteBuilder field but no prebuilt vignette index.
 
-   1. The Title field should be in title case. Current version is:
+   2. The Title field should be in title case. Current version is:
    'Hierarchical Clustering of Univariate (1D) Data'
    In title case that is:
    'Hierarchical Clustering of Univariate (1d) Data'
 
-   1. The Description field should not start with the package name,
+   3. The Description field should not start with the package name,
      'This package' or similar.
 
 # Local checks
