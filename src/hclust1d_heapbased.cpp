@@ -8,7 +8,8 @@ using namespace Rcpp;
 
 // [[Rcpp::export(.hclust1d_heapbased)]]
 List hclust1d_heapbased(NumericVector & points, int method) {
-//general linkage case with a heap
+// general linkage case with a heap
+// methods: 2 - complete
 
   int points_size = points.size();
 
@@ -36,24 +37,22 @@ List hclust1d_heapbased(NumericVector & points, int method) {
 
   //the sequence indexed by the numbers of intervals (there are points_size - 1 intervals)
   //and returning an index of a left point in each interval
-  auto left_indexes = [&](int i) {
+  std::vector<int> left_indexes(points_size - 1);
     //input: indexes from 0 to points_size - 2, count: points_size - 1
-    assert(i >= 0 and i < points_size - 1);
-    return order_points[left_seq(i)];
-  };
+  for (int i = 0; i < points_size - 1; i++)
+    left_indexes[i] = order_points[left_seq(i)];
 
   //the sequence indexed by the numbers of intervals (there are points_size - 1 intervals)
   //and returning an index of a right point in each interval
-  auto right_indexes = [&](int i) {
+  std::vector<int> right_indexes(points_size - 1);
     //input: indexes from 0 to points_size - 2, count: points_size - 1
-    assert(i >= 0 and i < points_size - 1);
-    return order_points[right_seq(i)];
-  };
+  for (int i = 0; i < points_size - 1; i++)
+    right_indexes[i] = order_points[right_seq(i)];
 
   std::vector<double> distances;
   //the sequence of distances within intervals (there are points_size - 1 intervals)
   for (int i = 0; i < points_size - 1; i++)
-    distances.push_back(points[right_indexes(i)] - points[left_indexes(i)]);
+    distances.push_back(points[right_indexes[i]] - points[left_indexes[i]]);
 
   std::vector<int> interval_left_ids(points_size-1);
   std::iota(interval_left_ids.begin(), interval_left_ids.end(), -1);
@@ -66,18 +65,18 @@ List hclust1d_heapbased(NumericVector & points, int method) {
   std::vector<int> left_merges(points_size - 1);
   std::vector<int> right_merges(points_size - 1);
   for (int i=0; i<points_size - 1; i++) {
-    left_merges[i] = -left_indexes(i) - 1;
-    right_merges[i] = -right_indexes(i) - 1;
+    left_merges[i] = -left_indexes[i] - 1;
+    right_merges[i] = -right_indexes[i] - 1;
   }
 
-  struct heap h = init_heap(distances);
+  struct heap priority_queue = init_heap(distances);
 
   IntegerMatrix merge(points_size - 1 , 2 );
   NumericVector height(points_size - 1);
 
   for (int stage = 0; stage < points_size - 1; stage++) {
 
-    std::pair<double, int> key_id = remove_minimum(h);
+    std::pair<double, int> key_id = remove_minimum(priority_queue);
     int id = key_id.second;
 
     int left_id = interval_left_ids[id];
@@ -89,13 +88,21 @@ List hclust1d_heapbased(NumericVector & points, int method) {
     height[stage] = key_id.first;
 
     if (left_id > -1) {
+        right_indexes[left_id] = right_indexes[id];
         interval_right_ids[left_id] = right_id;
         right_merges[left_id] = stage + 1;
+
+        if (method == 2)  //complete linkage
+          update_key_by_id(priority_queue, left_id, points[right_indexes[left_id]] - points[left_indexes[left_id]]);
       }
 
     if (right_id > -1) {
+        left_indexes[right_id] = left_indexes[id];
         interval_left_ids[right_id] = left_id;
         left_merges[right_id] = stage + 1;
+
+        if (method == 2)  //complete linkage
+          update_key_by_id(priority_queue, right_id, points[right_indexes[right_id]] - points[right_indexes[left_id]]);
       }
     }
 

@@ -17,6 +17,10 @@
 int left(int i) { return 2*i+1; }
 int right(int i) { return 2*i+2; }
 int parent(int i) { return (i-1)/2; }
+//and declarations:
+void switch_node(struct heap & h, int i, int j);
+void heapify_up(struct heap & h, int i);
+void heapify_down(struct heap & h, int i);
 
 struct heap init_heap(std::vector<double> keys) {
   //pass by value the keys because they get assigned and rearanged
