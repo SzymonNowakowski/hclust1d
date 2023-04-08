@@ -51,5 +51,5 @@ plot(dendrogram)
 
 }
 \seealso{
-\code{\link[=supported_methods]{supported_methods()}} for listing of all currently supported linkage methods.
+\code{\link[=supported_methods]{supported_methods()}} for listing of all currently supported linkage methods, \code{\link[=supported_dist.methods]{supported_dist.methods()}} for listing of all currently supported distance methods.
 }

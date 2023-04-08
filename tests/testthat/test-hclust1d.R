@@ -86,7 +86,7 @@ expect_all_equalities <- function(res_1d, res_1d_alt, res_1d_dist) {
                                    res_1d$merge[2,1] == res_1d_dist$merge[2,1] & res_1d$merge[2,2] == res_1d_dist$merge[2,2]) {
     compare_alt <- FALSE
   }
-  if (nrow(res_1d$merge) >= 3) if (res_1d$merge[1,1] == res_1d_dist$merge[1,1] & res_1d$merge[1,2] == res_1d_dist$merge[1,2] &
+  if (nrow(res_1d$merge) == 3) if (res_1d$merge[1,1] == res_1d_dist$merge[1,1] & res_1d$merge[1,2] == res_1d_dist$merge[1,2] &
                                    res_1d$merge[2,1] == res_1d_dist$merge[2,1] & res_1d$merge[2,2] == res_1d_dist$merge[2,2] &
                                    res_1d$merge[3,1] == res_1d_dist$merge[3,1] & res_1d$merge[3,2] == res_1d_dist$merge[3,2]) {
     compare_alt <- FALSE

@@ -4,5 +4,5 @@
 #'
 #' @return A character vector with currently supported linkage methods.
 #'
-#' @export supported_methods
-supported_methods <- function() c("complete", "single")
+#' @export
+supported_methods <- function() c("complete", "average", "single")

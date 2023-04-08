@@ -32,14 +32,13 @@
 #' \item{method}{the linkage method used for clustering.}
 #' \item{dist.method}{the distance method used in building the distance matrix, or \code{"euclidean"} if \code{x} is a vector of 1D points}
 #'
-#' @seealso [supported_methods()] for listing of all currently supported linkage methods.
+#' @seealso [supported_methods()] for listing of all currently supported linkage methods, [supported_dist.methods()] for listing of all currently supported distance methods.
 #'
 #' @examples
 #' dendrogram <- hclust1d(rnorm(100))
 #' plot(dendrogram)
 #'
-#' @export hclust1d
-
+#' @export
 hclust1d <- function(x, distance = FALSE, method = "complete") {
   #dispatch is written in R, because I don't know how to execute do.call() from Rcpp
 
