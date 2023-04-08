@@ -9,7 +9,13 @@ using namespace Rcpp;
 // [[Rcpp::export(.hclust1d_heapbased)]]
 List hclust1d_heapbased(NumericVector & points, int method) {
 // general linkage case with a heap
-// methods: 1 - complete
+// methods: 0 - single implemented by heap  (undocumented behaviour)
+//          1 - complete
+
+// method == 0 is intentionally undocumented
+// intended for efficiency tests
+// DO NOT USE as it may be dropped in future versions without notice
+
 
   int points_size = points.size();
 
@@ -88,21 +94,35 @@ List hclust1d_heapbased(NumericVector & points, int method) {
     height[stage] = key_id.first;
 
     if (left_id > -1) {
-        right_indexes[left_id] = right_indexes[id];
+
         interval_right_ids[left_id] = right_id;
         right_merges[left_id] = stage + 1;
 
-        if (method == 1)  //complete linkage
-          update_key_by_id(priority_queue, left_id, points[right_indexes[left_id]] - points[left_indexes[left_id]]);
+        switch (method) {
+          case 0:   //single_implemented_by_heap linkage
+            break;
+          case 1:  //complete linkage
+            right_indexes[left_id] = right_indexes[id];
+            update_key_by_id(priority_queue, left_id, points[right_indexes[left_id]] - points[left_indexes[left_id]]);
+            break;
+
+        }
       }
 
     if (right_id > -1) {
-        left_indexes[right_id] = left_indexes[id];
+
         interval_left_ids[right_id] = left_id;
         left_merges[right_id] = stage + 1;
 
-        if (method == 1)  //complete linkage
-          update_key_by_id(priority_queue, right_id, points[right_indexes[right_id]] - points[left_indexes[right_id]]);
+        switch (method) {
+          case 0:   //single_implemented_by_heap linkage
+            break;
+          case 1:   //complete linkage
+            left_indexes[right_id] = left_indexes[id];
+            update_key_by_id(priority_queue, right_id, points[right_indexes[right_id]] - points[left_indexes[right_id]]);
+            break;
+
+        }
       }
     }
 

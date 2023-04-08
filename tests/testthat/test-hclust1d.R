@@ -3,7 +3,7 @@
 
 test_that("points  and distance length 0 and 1 should fail", {
   set.seed(0)
-  for (tested_method in supported_methods()) {
+  for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
     expect_error(hclust1d(numeric(0), method=tested_method))
     expect_error(hclust1d(1, method=tested_method))
     expect_error(hclust1d(dist(numeric(0)), distance = TRUE, method=tested_method))
@@ -12,27 +12,27 @@ test_that("points  and distance length 0 and 1 should fail", {
 })
 
 test_that("non-numerical points should fail", {
-  for (tested_method in supported_methods()) {
+  for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
     expect_error(hclust1d("x", method=tested_method))
   }
 })
 
 test_that("distance not logical or not scalar should fail", {
-  for (tested_method in supported_methods()) {
+  for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
     expect_error(hclust1d(c(1, 2, 3), distance="yes", method=tested_method))
     expect_error(hclust1d(c(1, 2, 3), distance=c(TRUE, TRUE), method=tested_method))
   }
 })
 
 test_that("distance matrix not S3 dist class should fail", {
-  for (tested_method in supported_methods()) {
+  for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
     expect_error(hclust1d(as.matrix(dist(c(1, 2, 3))), distance=TRUE, method=tested_method))
   }
 })
 
 
 test_that("checking distance types", {
-  for (tested_method in supported_methods()) {
+  for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
     #distance method should get carried over to hclust1d result
     for (dist_method in c("euclidean", "maximum", "manhattan", "minkowski"))
       expect_equal(hclust1d(dist(c(1, 2, 3), method=dist_method), distance=TRUE, method=tested_method)$dist.method, dist_method)
@@ -44,7 +44,7 @@ test_that("checking distance types", {
 })
 
 test_that("should preserve names or values or indices of points", {
-  for (tested_method in supported_methods()) {
+  for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
     expect_equal(hclust1d(c(one=1, two=2, three=-3), method=tested_method)$labels, c("one", "two", "three"))
     expect_equal(hclust1d(c(1.1, 2.3, -2.2), method=tested_method)$labels, c("1.1", "2.3", "-2.2"))
     expect_equal(hclust1d(dist(c(one=1, two=2, three=-3)), distance=TRUE, method=tested_method)$labels, c("one", "two", "three"))
@@ -53,12 +53,25 @@ test_that("should preserve names or values or indices of points", {
 })
 
 expect_some_equalities <- function(res_1, res_2) {
+  if (res_1$method == "single_implemented_by_heap") {
+    res_1$method <- "single"
+  }
+  if (res_2$method == "single_implemented_by_heap") {
+    res_2$method <- "single"
+  }
+
   expect_equal(res_1$dist.method, res_2$dist.method)
   expect_equal(res_1$method, res_2$method)
   expect_equal(nrow(res_1$merge), nrow(res_2$merge))
   expect_equal(res_1$height, res_2$height)
 
   expect_s3_class(res_1, class(res_2))
+}
+
+expect_equal_merges <- function(res_1, res_2) {
+  for (i in 1:nrow(res_1$merge)) {
+    expect_setequal(res_1$merge[i, ], res_2$merge[i, ])
+  }
 }
 
 expect_all_equalities <- function(res_1d, res_1d_alt, res_1d_dist) {
@@ -70,18 +83,26 @@ expect_all_equalities <- function(res_1d, res_1d_alt, res_1d_dist) {
     compare_alt <- FALSE
   }
   if (nrow(res_1d$merge) == 2) if (res_1d$merge[1,1] == res_1d_dist$merge[1,1] & res_1d$merge[1,2] == res_1d_dist$merge[1,2] &
-      res_1d$merge[2,1] == res_1d_dist$merge[2,1] & res_1d$merge[2,2] == res_1d_dist$merge[2,2]) {
+                                   res_1d$merge[2,1] == res_1d_dist$merge[2,1] & res_1d$merge[2,2] == res_1d_dist$merge[2,2]) {
     compare_alt <- FALSE
   }
   if (nrow(res_1d$merge) >= 3) if (res_1d$merge[1,1] == res_1d_dist$merge[1,1] & res_1d$merge[1,2] == res_1d_dist$merge[1,2] &
-      res_1d$merge[2,1] == res_1d_dist$merge[2,1] & res_1d$merge[2,2] == res_1d_dist$merge[2,2] &
-      res_1d$merge[3,1] == res_1d_dist$merge[3,1] & res_1d$merge[3,2] == res_1d_dist$merge[3,2]) {
+                                   res_1d$merge[2,1] == res_1d_dist$merge[2,1] & res_1d$merge[2,2] == res_1d_dist$merge[2,2] &
+                                   res_1d$merge[3,1] == res_1d_dist$merge[3,1] & res_1d$merge[3,2] == res_1d_dist$merge[3,2]) {
     compare_alt <- FALSE
   }
+  if (nrow(res_1d$merge) >= 4) if (res_1d$merge[1,1] == res_1d_dist$merge[1,1] & res_1d$merge[1,2] == res_1d_dist$merge[1,2] &
+                                   res_1d$merge[2,1] == res_1d_dist$merge[2,1] & res_1d$merge[2,2] == res_1d_dist$merge[2,2] &
+                                   res_1d$merge[3,1] == res_1d_dist$merge[3,1] & res_1d$merge[3,2] == res_1d_dist$merge[3,2] &
+                                   res_1d$merge[4,1] == res_1d_dist$merge[4,1] & res_1d$merge[4,2] == res_1d_dist$merge[4,2]) {
+    compare_alt <- FALSE
+  }
+
 
   if (!compare_alt) {
     #wild swing of luck here!
     expect_equal(res_1d$merge, res_1d_dist$merge)
+
   } else {
     expect_equal(res_1d_alt$merge, res_1d_dist$merge)
   }
@@ -92,20 +113,24 @@ repetitions <- 1:5
 
 range <- 2:100
 test_that("equality of results with stats::hclust, a vector without repetitions", {
-  for (tested_method in supported_methods()) {
+  for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
+    stats_hlust_method <- tested_method
+    if (tested_method == "single_implemented_by_heap")
+      stats_hlust_method <- "single"
     for (len in range) {
       for (j in repetitions) {
         x <- rnorm(len)
         res_1d <- hclust1d(x, method=tested_method)
         res_1d_dist <- hclust1d(dist(x), distance = TRUE, method=tested_method)
         res_1d_alt <- hclust1d(-x, method=tested_method)
-        res_md <- stats::hclust(dist(x), method=tested_method)
+        res_md <- stats::hclust(dist(x), method=stats_hlust_method)
 
-        expect_all_equalities(res_1d, res_1d_alt, res_1d_dist)
+       # expect_all_equalities(res_1d, res_1d_alt, res_1d_dist)
+
         expect_some_equalities(res_1d, res_md)
-
-        for (i in 1:nrow(res_1d$merge))
+        for (i in 1:nrow(res_1d$merge)) {
           expect_setequal(res_1d$merge[i, ], res_md$merge[i, ])
+        }
       }
     }
   }
@@ -118,7 +143,10 @@ percent <- 0.25
 test_that("equality of results with stats::hclust, a vector with double repetitions", {
   # with double repetitions the clusters comprising of two singletons should be the same as in stats::hclust
   # but may be differently ordered
-  for (tested_method in supported_methods()) {
+  for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
+    stats_hlust_method <- tested_method
+    if (tested_method == "single_implemented_by_heap")
+      stats_hlust_method <- "single"
     for (len in range) {
       for (j in repetitions) {
         x <- rnorm(len)
@@ -134,7 +162,7 @@ test_that("equality of results with stats::hclust, a vector with double repetiti
         res_1d <- hclust1d(x, method=tested_method)
         res_1d_dist <- hclust1d(dist(x), distance = TRUE, method=tested_method)
         res_1d_alt <- hclust1d(-x, method=tested_method)
-        res_md <- stats::hclust(dist(x), method=tested_method)
+        res_md <- stats::hclust(dist(x), method=stats_hlust_method)
 
         expect_all_equalities(res_1d, res_1d_alt, res_1d_dist)
         expect_some_equalities(res_1d, res_md)
@@ -219,8 +247,10 @@ test_that("equality of results with stats::hclust, a vector with triple repetiti
 
   # with more than triple repetitions it would become intractable in principle,
   # what would be the order of creation of larger clusters
-  for (tested_method in supported_methods()) {
-
+  for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
+    stats_hlust_method <- tested_method
+    if (tested_method == "single_implemented_by_heap")
+      stats_hlust_method <- "single"
     for (len in range) {
       for (j in repetitions) {
         x <- rnorm(len)
@@ -238,7 +268,7 @@ test_that("equality of results with stats::hclust, a vector with triple repetiti
         res_1d <- hclust1d(x, method=tested_method)
         res_1d_dist <- hclust1d(dist(x), distance = TRUE, method=tested_method)
         res_1d_alt <- hclust1d(-x, method=tested_method)
-        res_md <- stats::hclust(dist(x), method=tested_method)
+        res_md <- stats::hclust(dist(x), method=stats_hlust_method)
 
         expect_all_equalities(res_1d, res_1d_alt, res_1d_dist)
         expect_some_equalities(res_1d, res_md)

@@ -92,6 +92,14 @@ hclust1d <- function(x, distance = FALSE, method = "complete") {
     ret$call <- match.call()
     ret$method <- method
 
+  } else if (method == "single_implemented_by_heap") {  # intentionally undocumented behaviour
+      # intended for efficiency tests
+      # DO NOT USE as it may be dropped in future versions without notice
+      #
+    ret <- .hclust1d_heapbased(x, 0)
+    ret$call <- match.call()
+    ret$method <- method
+
   } else {
     stop(paste("linkage", method, "not supported in the current version of hclust1d. See supported_methods() for more information"))
   }
