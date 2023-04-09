@@ -13,6 +13,7 @@ List hclust1d_heapbased(NumericVector & points, int method) {
 // methods: 0 - single implemented by heap  (undocumented behaviour)
 //          1 - complete
 //          2 - average
+//          3 - centroid
 
 // method == 0 is intentionally undocumented
 // intended for efficiency tests
@@ -58,11 +59,19 @@ List hclust1d_heapbased(NumericVector & points, int method) {
     right_part_rightish_indexes[i] = order_points[right_seq(i)];
 
   std::vector<double> distances;
+  //the following variables are required for centroid linkage
+  std::vector<double> left_sums;
+  std::vector<double> right_sums;
   //the sequence of distances within intervals (there are points_size - 1 intervals)
-  for (int i = 0; i < points_size - 1; i++)
+  for (int i = 0; i < points_size - 1; i++) {
     distances.push_back(points[right_part_rightish_indexes[i]] - points[left_part_leftish_indexes[i]]);
+    if (method == 3) {  //centroid
+      left_sums.push_back(points[left_part_leftish_indexes[i]]);
+      right_sums.push_back(points[right_part_rightish_indexes[i]]);
+    }
+  }
 
-  //the following variables are required for average linkage only
+  //the following variables are required for average linkage
   //each interval (which is a possible merge opportunity)
   //               constitutes of 2 clusters - the left one and the write one
   //at the beginning they are both just the singletons
@@ -70,10 +79,11 @@ List hclust1d_heapbased(NumericVector & points, int method) {
   std::vector<double> left_part_rightish_weighted_distance_sums(points_size - 1, 0.0);
   std::vector<double> right_part_leftish_weighted_distance_sums(points_size - 1, 0.0);
   std::vector<double> right_part_rightish_weighted_distance_sums(points_size - 1, 0.0);
-  std::vector<int> left_part_cluster_counts(points_size - 1, 1);
-  std::vector<int> right_part_cluster_counts(points_size - 1, 1);
+  std::vector<int> left_part_cluster_counts(points_size - 1, 1);             //needed for centroid linkage too
+  std::vector<int> right_part_cluster_counts(points_size - 1, 1);            //needed for centroid linkage too
   std::vector<int> left_part_rightish_indexes = left_part_leftish_indexes;
   std::vector<int> right_part_leftish_indexes = right_part_rightish_indexes;
+
 
 
   std::vector<int> interval_left_ids(points_size-1);
@@ -111,10 +121,13 @@ List hclust1d_heapbased(NumericVector & points, int method) {
     height[stage] = key_id.first;
 
     int id_cluster_count;
+    double id_sum;
     double id_rightish_weighted_distance_sums;
     double id_leftish_weighted_distance_sums;
 
-    if (method == 2) {  //calculate statistics of the currently merged cluster
+
+
+    if (method == 2) { //"average"  //calculate statistics of the currently merged cluster
       id_cluster_count = left_part_cluster_counts[id] + right_part_cluster_counts[id];
       id_rightish_weighted_distance_sums = left_part_rightish_weighted_distance_sums[id] +
                                            right_part_rightish_weighted_distance_sums[id] +
@@ -124,6 +137,10 @@ List hclust1d_heapbased(NumericVector & points, int method) {
                                           right_part_leftish_weighted_distance_sums[id] +
                                           right_part_cluster_counts[id] *
                                           (points[right_part_leftish_indexes[id]] - points[left_part_leftish_indexes[id]]);
+    }
+    if (method==3) {  //"centroid"
+      id_cluster_count = left_part_cluster_counts[id] + right_part_cluster_counts[id];
+      id_sum = left_sums[id] + right_sums[id];
     }
 
     if (left_id > -1) {
@@ -151,6 +168,13 @@ List hclust1d_heapbased(NumericVector & points, int method) {
             right_part_leftish_indexes[left_id] = left_part_leftish_indexes[id];
             right_part_rightish_indexes[left_id] = right_part_rightish_indexes[id];
             break;
+          case 3:  //centroid works on a squared euclidean distance in theory, but for 1d it makes no difference
+            update_key_by_id(priority_queue, left_id,
+                             id_sum / id_cluster_count -
+                             left_sums[left_id] / left_part_cluster_counts[left_id]);
+            right_sums[left_id] = id_sum;
+            right_part_cluster_counts[left_id] = id_cluster_count;
+            break;
         }
       }
 
@@ -177,6 +201,13 @@ List hclust1d_heapbased(NumericVector & points, int method) {
             left_part_cluster_counts[right_id] = id_cluster_count;
             left_part_rightish_indexes[right_id] = right_part_rightish_indexes[id];
             left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
+            break;
+          case 3:  //centroid works on a squared euclidean distance in theory, but for 1d it makes no difference
+            update_key_by_id(priority_queue, right_id,
+                             right_sums[right_id] / right_part_cluster_counts[right_id] -
+                             id_sum / id_cluster_count);
+            left_sums[right_id] = id_sum;
+            left_part_cluster_counts[right_id] = id_cluster_count;
             break;
         }
       }

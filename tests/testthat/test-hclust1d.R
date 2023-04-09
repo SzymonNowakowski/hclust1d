@@ -121,9 +121,14 @@ test_that("equality of results with stats::hclust, a vector without repetitions"
       for (j in repetitions) {
         x <- rnorm(len)
         res_1d <- hclust1d(x, method=tested_method)
-        res_1d_dist <- hclust1d(dist(x), distance = TRUE, method=tested_method)
+
+        distance <- dist(x)
+        if (tested_method == "centroid")
+          distance <- distance^2
+
+        res_1d_dist <- hclust1d(distance, distance = TRUE, method=tested_method)
         res_1d_alt <- hclust1d(-x, method=tested_method)
-        res_md <- stats::hclust(dist(x), method=stats_hlust_method)
+        res_md <- stats::hclust(distance, method=stats_hlust_method)
 
        # expect_all_equalities(res_1d, res_1d_alt, res_1d_dist)
 
@@ -160,9 +165,14 @@ test_that("equality of results with stats::hclust, a vector with double repetiti
         x <- new_x[shuffle_vector]
 
         res_1d <- hclust1d(x, method=tested_method)
-        res_1d_dist <- hclust1d(dist(x), distance = TRUE, method=tested_method)
+
+        distance <- dist(x)
+        if (tested_method == "centroid")
+          distance <- distance^2
+
+        res_1d_dist <- hclust1d(distance, distance = TRUE, method=tested_method)
         res_1d_alt <- hclust1d(-x, method=tested_method)
-        res_md <- stats::hclust(dist(x), method=stats_hlust_method)
+        res_md <- stats::hclust(distance, method=stats_hlust_method)
 
         expect_all_equalities(res_1d, res_1d_alt, res_1d_dist)
         expect_some_equalities(res_1d, res_md)
@@ -266,9 +276,14 @@ test_that("equality of results with stats::hclust, a vector with triple repetiti
         x_indices <- new_x_indices[shuffle_vector]
 
         res_1d <- hclust1d(x, method=tested_method)
-        res_1d_dist <- hclust1d(dist(x), distance = TRUE, method=tested_method)
+
+        distance <- dist(x)
+        if (tested_method == "centroid")
+          distance <- distance^2
+
+        res_1d_dist <- hclust1d(distance, distance = TRUE, method=tested_method)
         res_1d_alt <- hclust1d(-x, method=tested_method)
-        res_md <- stats::hclust(dist(x), method=stats_hlust_method)
+        res_md <- stats::hclust(distance, method=stats_hlust_method)
 
         expect_all_equalities(res_1d, res_1d_alt, res_1d_dist)
         expect_some_equalities(res_1d, res_md)

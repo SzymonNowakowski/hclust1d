@@ -74,6 +74,11 @@ hclust1d <- function(x, distance = FALSE, method = "complete") {
       stop(paste(c("only those distance methods are supported in dist:", paste(supported_dist_methods, sep=", "))))
     }
 
+    if (method == "centroid") {
+      x <- sqrt(x)   # in centroid method in stats::hclust
+                     # the distance is squared euclidean
+    }
+
     x <- .dedistance(x, points_size)
   }
 
@@ -90,6 +95,11 @@ hclust1d <- function(x, distance = FALSE, method = "complete") {
     ret <- .hclust1d_heapbased(x, pmatch(method, supported_methods()))
     ret$call <- match.call()
     ret$method <- method
+
+    if (method == "centroid") {
+      ret$height <- ret$height^2   # in centroid method in stas::hclust
+      # the distance is squared before proceeding, so also resulting heights are squared.
+    }
 
   } else if (method == "single_implemented_by_heap") {  # intentionally undocumented behaviour
       # intended for efficiency tests
