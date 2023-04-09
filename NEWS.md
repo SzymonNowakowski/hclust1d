@@ -1,4 +1,8 @@
 
+# hclust1d 0.0.1.9002
+
+- Added `centroid` linkage support
+
 # hclust1d 0.0.1.9001
 
 - Added `average` linkage support
