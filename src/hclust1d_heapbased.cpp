@@ -4,6 +4,7 @@
 #include <assert.h>
 #include "order.h"
 #include "heap.h"
+
 using namespace Rcpp;
 
 // [[Rcpp::export(.hclust1d_heapbased)]]
@@ -44,22 +45,22 @@ List hclust1d_heapbased(NumericVector & points, int method) {
 
   //the sequence indexed by the numbers of intervals (there are points_size - 1 intervals)
   //and returning an index of a left point in each interval
-  std::vector<int> left_indexes(points_size - 1);
+  std::vector<int> left_part_leftish_indexes(points_size - 1);
     //input: indexes from 0 to points_size - 2, count: points_size - 1
   for (int i = 0; i < points_size - 1; i++)
-    left_indexes[i] = order_points[left_seq(i)];
+    left_part_leftish_indexes[i] = order_points[left_seq(i)];
 
   //the sequence indexed by the numbers of intervals (there are points_size - 1 intervals)
   //and returning an index of a right point in each interval
-  std::vector<int> right_indexes(points_size - 1);
+  std::vector<int> right_part_rightish_indexes(points_size - 1);
     //input: indexes from 0 to points_size - 2, count: points_size - 1
   for (int i = 0; i < points_size - 1; i++)
-    right_indexes[i] = order_points[right_seq(i)];
+    right_part_rightish_indexes[i] = order_points[right_seq(i)];
 
   std::vector<double> distances;
   //the sequence of distances within intervals (there are points_size - 1 intervals)
   for (int i = 0; i < points_size - 1; i++)
-    distances.push_back(points[right_indexes[i]] - points[left_indexes[i]]);
+    distances.push_back(points[right_part_rightish_indexes[i]] - points[left_part_leftish_indexes[i]]);
 
   //the following variables are required for average linkage only
   //each interval (which is a possible merge opportunity)
@@ -71,10 +72,9 @@ List hclust1d_heapbased(NumericVector & points, int method) {
   std::vector<double> right_part_rightish_weighted_distance_sums(points_size - 1, 0.0);
   std::vector<int> left_part_cluster_counts(points_size - 1, 1);
   std::vector<int> right_part_cluster_counts(points_size - 1, 1);
-  std::vector<int> left_part_leftish_indexes = left_indexes;
-  std::vector<int> left_part_rightish_indexes = left_indexes;
-  std::vector<int> right_part_leftish_indexes = right_indexes;
-  std::vector<int> right_part_rightish_indexes = right_indexes;
+  std::vector<int> left_part_rightish_indexes = left_part_leftish_indexes;
+  std::vector<int> right_part_leftish_indexes = right_part_rightish_indexes;
+
 
   std::vector<int> interval_left_ids(points_size-1);
   std::iota(interval_left_ids.begin(), interval_left_ids.end(), -1);
@@ -87,8 +87,8 @@ List hclust1d_heapbased(NumericVector & points, int method) {
   std::vector<int> left_merges(points_size - 1);
   std::vector<int> right_merges(points_size - 1);
   for (int i=0; i<points_size - 1; i++) {
-    left_merges[i] = -left_indexes[i] - 1;
-    right_merges[i] = -right_indexes[i] - 1;
+    left_merges[i] = -left_part_leftish_indexes[i] - 1;
+    right_merges[i] = -right_part_rightish_indexes[i] - 1;
   }
 
   struct heap priority_queue = init_heap(distances);
@@ -121,9 +121,9 @@ List hclust1d_heapbased(NumericVector & points, int method) {
                                            left_part_cluster_counts[id] *
                                            (points[right_part_rightish_indexes[id]] - points[left_part_rightish_indexes[id]]);
       id_leftish_weighted_distance_sums = left_part_leftish_weighted_distance_sums[id] +
-                                           right_part_leftish_weighted_distance_sums[id] +
-                                           right_part_cluster_counts[id] *
-                                           (points[right_part_leftish_indexes[id]] - points[left_part_leftish_indexes[id]]);
+                                          right_part_leftish_weighted_distance_sums[id] +
+                                          right_part_cluster_counts[id] *
+                                          (points[right_part_leftish_indexes[id]] - points[left_part_leftish_indexes[id]]);
     }
 
     if (left_id > -1) {
@@ -135,20 +135,21 @@ List hclust1d_heapbased(NumericVector & points, int method) {
           case 0:   //single_implemented_by_heap linkage
             break;
           case 1:  //complete
-            update_key_by_id(priority_queue, left_id, points[right_indexes[id]] - points[left_indexes[left_id]]);
-            right_indexes[left_id] = right_indexes[id];
+            update_key_by_id(priority_queue, left_id, points[right_part_rightish_indexes[id]] - points[left_part_leftish_indexes[left_id]]);
+            right_part_rightish_indexes[left_id] = right_part_rightish_indexes[id];
             break;
           case 2:  //average linkage
             //id cluster just got merged
             update_key_by_id(priority_queue, left_id,
                              left_part_rightish_weighted_distance_sums[left_id] / left_part_cluster_counts[left_id] +
                              id_leftish_weighted_distance_sums / id_cluster_count +
-                             points[left_indexes[id]] - points[left_part_rightish_indexes[left_id]]);
+                             points[left_part_leftish_indexes[id]] - points[left_part_rightish_indexes[left_id]]);
 
             right_part_leftish_weighted_distance_sums[left_id] = id_leftish_weighted_distance_sums;
+            right_part_rightish_weighted_distance_sums[left_id] = id_rightish_weighted_distance_sums;
             right_part_cluster_counts[left_id] = id_cluster_count;
-            right_part_leftish_indexes[left_id] = left_indexes[id];
-            right_indexes[left_id] = right_indexes[id];
+            right_part_leftish_indexes[left_id] = left_part_leftish_indexes[id];
+            right_part_rightish_indexes[left_id] = right_part_rightish_indexes[id];
             break;
         }
       }
@@ -162,19 +163,20 @@ List hclust1d_heapbased(NumericVector & points, int method) {
           case 0:   //single_implemented_by_heap linkage
             break;
           case 1:   //complete linkage
-            update_key_by_id(priority_queue, right_id, points[right_indexes[right_id]] - points[left_indexes[id]]);
-            left_indexes[right_id] = left_indexes[id];
+            update_key_by_id(priority_queue, right_id, points[right_part_rightish_indexes[right_id]] - points[left_part_leftish_indexes[id]]);
+            left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
             break;
           case 2:  //average linkage
             update_key_by_id(priority_queue, right_id,
                              id_rightish_weighted_distance_sums / id_cluster_count +
                              right_part_leftish_weighted_distance_sums[right_id] / right_part_cluster_counts[right_id] +
-                             points[right_part_leftish_indexes[right_id]] - points[right_indexes[id]]);
+                             points[right_part_leftish_indexes[right_id]] - points[right_part_rightish_indexes[id]]);
 
+            left_part_leftish_weighted_distance_sums[right_id] = id_leftish_weighted_distance_sums;
             left_part_rightish_weighted_distance_sums[right_id] = id_rightish_weighted_distance_sums;
             left_part_cluster_counts[right_id] = id_cluster_count;
-            left_part_rightish_indexes[right_id] = right_indexes[id];
-            left_indexes[right_id] = left_indexes[id];
+            left_part_rightish_indexes[right_id] = right_part_rightish_indexes[id];
+            left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
             break;
         }
       }

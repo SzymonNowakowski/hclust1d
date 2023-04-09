@@ -1,5 +1,5 @@
 #include "heap.h"
-#include <iostream>
+#include <iostream>  //TODO remove with cout
 
 /*
  *                          a custom heap implementation
