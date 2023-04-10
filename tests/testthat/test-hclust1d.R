@@ -1,7 +1,8 @@
 
+repetitions <- 1:5
 
 
-test_that("points  and distance length 0 and 1 should fail", {
+test_that("points and distance length 0 and 1 should fail", {
   set.seed(0)
   for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
     expect_error(hclust1d(numeric(0), method=tested_method))
@@ -21,6 +22,13 @@ test_that("distance not logical or not scalar should fail", {
   for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
     expect_error(hclust1d(c(1, 2, 3), distance="yes", method=tested_method))
     expect_error(hclust1d(c(1, 2, 3), distance=c(TRUE, TRUE), method=tested_method))
+  }
+})
+
+test_that("squared not logical or not scalar should fail", {
+  for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
+    expect_error(hclust1d(c(1, 2, 3), distance=TRUE, squared="yes", method=tested_method))
+    expect_error(hclust1d(c(1, 2, 3), distance=TRUE, squared=c(TRUE, TRUE), method=tested_method))
   }
 })
 
@@ -109,7 +117,6 @@ expect_all_equalities <- function(res_1d, res_1d_alt, res_1d_dist) {
 
 }
 
-repetitions <- 1:5
 
 range <- 2:100
 test_that("equality of results with stats::hclust, a vector without repetitions", {

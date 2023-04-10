@@ -24,8 +24,9 @@
 #' Please note that (following \code{stats::hclust} implementation for \code{method = "centroid"}), the inter-cluster distances for centroid linkage (returned as a \code{height})
 #' are \emph{squared} euclidean distances
 #' between the relevant clusters' centroids. This behaviour is in odds with other linkage methods, for which \emph{unsquared} euclidean distances are returned. Also,
-#' for full compatibility with \code{stats::hclust} for \code{method="centroid"}, the squared euclidean distance can be fed into
-#' \code{hlust1d::hclust1d} with \code{distance} and \code{squared} arguments both set to \code{TRUE}, but also note that
+#' for full compatibility with \code{stats::hclust} (which expects squared euclidean distance structure as input for \code{method="centroid"}),
+#' \code{x} in a form of a squared euclidean distance structure between points can be fed into
+#' \code{hlust1d::hclust1d} as well, with both \code{distance} and \code{squared} arguments set to \code{TRUE}. Also, note that
 #' \code{hlust1d::hclust1d} returns the same heights for unsquared distances in \code{x} (with the default \code{squared=FALSE} argument)
 #' and for \code{x} in a form of a vector of 1D points (with the default \code{distance=FALSE} argument).
 #'
@@ -44,31 +45,34 @@
 #'
 #' @examples
 #'
-#' dendrogram <- hclust1d(rnorm(100)) # a faster replacement for
+#' dendrogram <- hclust1d(rnorm(100))                                                               # A faster replacement for
 #'               # stats::hclust(dist(rnorm(100))) with a default complete linkage
 #'
-#' dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE) # a faster replacement for
+#' dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE)                                        # A faster replacement for
 #'               # stats::hclust(dist(rnorm(100))) with a default complete linkage
 #'
-#' dendrogram <- hclust1d(rnorm(100), method = "average") # a faster replacement for
+#' dendrogram <- hclust1d(rnorm(100), method = "average")                                           # A faster replacement for
 #'               # stats::hclust(dist(rnorm(100)), method = "average")
 #'
-#' dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "average") # a faster replacement for
+#' dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "average")                    # A faster replacement for
 #'               # stats::hclust(dist(rnorm(100)), method = "average")
 #'
-#' dendrogram <- hclust1d(rnorm(100), method = "centroid") # a faster replacement for
+#' dendrogram <- hclust1d(rnorm(100), method = "centroid")                                          # A faster replacement for
 #'               # stats::hclust(dist(rnorm(100))^2, method = "centroid")
+#'               # Note that stats::hclust expects squared euclidean distance input for centroid linkage.
 #'
-#' dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "centroid") # a faster replacement for
+#' dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "centroid")                   # A faster replacement for
 #'               # stats::hclust(dist(rnorm(100))^2, method = "centroid")
+#'               # Note that stats::hclust expects squared euclidean distance input for centroid linkage.
 #'
-#' dendrogram <- hclust1d(dist(rnorm(100))^2, distance = TRUE, squared = TRUE, method = "centroid") # a faster replacement for
+#' dendrogram <- hclust1d(dist(rnorm(100))^2, distance = TRUE, squared = TRUE, method = "centroid") # A faster replacement for
 #'               # stats::hclust(dist(rnorm(100))^2, method = "centroid")
+#'               # Note that stats::hclust expects squared euclidean distance input for centroid linkage.
 #'
-#' dendrogram <- hclust1d(rnorm(100), method = "single") # a faster replacement for
+#' dendrogram <- hclust1d(rnorm(100), method = "single")                                            # A faster replacement for
 #'               # stats::hclust(dist(rnorm(100)), method = "single")
 #'
-#' dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "single") # a faster replacement for
+#' dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "single")                     # A faster replacement for
 #'               # stats::hclust(dist(rnorm(100)), method = "single")
 #'
 #' plot(dendrogram) # plots the resulting dendrogram

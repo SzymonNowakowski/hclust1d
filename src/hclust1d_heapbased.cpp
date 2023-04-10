@@ -64,11 +64,15 @@ List hclust1d_heapbased(NumericVector & points, int method) {
   std::vector<double> right_sums;
   //the sequence of distances within intervals (there are points_size - 1 intervals)
   for (int i = 0; i < points_size - 1; i++) {
-    distances.push_back(points[right_part_rightish_indexes[i]] - points[left_part_leftish_indexes[i]]);
+    double distance = points[right_part_rightish_indexes[i]] - points[left_part_leftish_indexes[i]];
+
     if (method == 3) {  //centroid
+      distances.push_back(distance * distance);   //centroid returns a squared euclidean distance
       left_sums.push_back(points[left_part_leftish_indexes[i]]);
       right_sums.push_back(points[right_part_rightish_indexes[i]]);
     }
+    else
+      distances.push_back(distance);   //centroid returns a squared euclidean distance
   }
 
   //the following variables are required for average linkage
