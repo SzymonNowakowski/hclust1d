@@ -169,9 +169,9 @@ List hclust1d_heapbased(NumericVector & points, int method) {
             right_part_rightish_indexes[left_id] = right_part_rightish_indexes[id];
             break;
           case 3:  //centroid works on a squared euclidean distance in theory, but for 1d it makes no difference
-            update_key_by_id(priority_queue, left_id,
-                             id_sum / id_cluster_count -
-                             left_sums[left_id] / left_part_cluster_counts[left_id]);
+            double distance = id_sum / id_cluster_count -
+                              left_sums[left_id] / left_part_cluster_counts[left_id];
+            update_key_by_id(priority_queue, left_id, distance * distance); //centroid returns a squared euclidean distance
             right_sums[left_id] = id_sum;
             right_part_cluster_counts[left_id] = id_cluster_count;
             break;
@@ -203,9 +203,9 @@ List hclust1d_heapbased(NumericVector & points, int method) {
             left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
             break;
           case 3:  //centroid works on a squared euclidean distance in theory, but for 1d it makes no difference
-            update_key_by_id(priority_queue, right_id,
-                             right_sums[right_id] / right_part_cluster_counts[right_id] -
-                             id_sum / id_cluster_count);
+            double distance = right_sums[right_id] / right_part_cluster_counts[right_id] -
+                              id_sum / id_cluster_count;
+            update_key_by_id(priority_queue, right_id, distance * distance); //centroid returns a squared euclidean distance
             left_sums[right_id] = id_sum;
             left_part_cluster_counts[right_id] = id_cluster_count;
             break;

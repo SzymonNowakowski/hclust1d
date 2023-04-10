@@ -122,11 +122,14 @@ test_that("equality of results with stats::hclust, a vector without repetitions"
         x <- rnorm(len)
         res_1d <- hclust1d(x, method=tested_method)
 
+        squared <- FALSE
         distance <- dist(x)
-        if (tested_method == "centroid")
+        if (tested_method == "centroid") {
+          squared <- TRUE
           distance <- distance^2
+        }
 
-        res_1d_dist <- hclust1d(distance, distance = TRUE, method=tested_method)
+        res_1d_dist <- hclust1d(distance, distance = TRUE, squared = squared, method=tested_method)
         res_1d_alt <- hclust1d(-x, method=tested_method)
         res_md <- stats::hclust(distance, method=stats_hlust_method)
 
@@ -166,11 +169,14 @@ test_that("equality of results with stats::hclust, a vector with double repetiti
 
         res_1d <- hclust1d(x, method=tested_method)
 
+        squared <- FALSE
         distance <- dist(x)
-        if (tested_method == "centroid")
+        if (tested_method == "centroid") {
+          squared <- TRUE
           distance <- distance^2
+        }
 
-        res_1d_dist <- hclust1d(distance, distance = TRUE, method=tested_method)
+        res_1d_dist <- hclust1d(distance, distance = TRUE, squared = squared, method=tested_method)
         res_1d_alt <- hclust1d(-x, method=tested_method)
         res_md <- stats::hclust(distance, method=stats_hlust_method)
 
@@ -277,11 +283,14 @@ test_that("equality of results with stats::hclust, a vector with triple repetiti
 
         res_1d <- hclust1d(x, method=tested_method)
 
+        squared <- FALSE
         distance <- dist(x)
-        if (tested_method == "centroid")
+        if (tested_method == "centroid") {
+          squared <- TRUE
           distance <- distance^2
+        }
 
-        res_1d_dist <- hclust1d(distance, distance = TRUE, method=tested_method)
+        res_1d_dist <- hclust1d(distance, distance = TRUE, squared = squared, method=tested_method)
         res_1d_alt <- hclust1d(-x, method=tested_method)
         res_md <- stats::hclust(distance, method=stats_hlust_method)
 
