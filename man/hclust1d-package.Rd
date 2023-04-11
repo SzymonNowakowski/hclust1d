@@ -4,9 +4,6 @@
 \name{hclust1d-package}
 \alias{hclust1d-package}
 \title{hclust1d-package}
-\description{
-\code{hclust1d} (Hierarchical CLUSTering for 1D) is a suit of algorithms for univariate agglomerative hierarchical clustering  (with a few possible choices of a linkage function) in O(n*log n) time. The better algorithmic time complexity is paired with an efficient \code{C++} implementation.
-}
 \section{All \code{hclust1d} Functions}{
 
 
@@ -26,7 +23,4 @@ For more information see a friendly "Getting started" vignette:
 vignette("getting-started", package="hclust1d")
 }
 
-}
-\author{
-Maintainer: Szymon Nowakowski \href{mailto:s.nowakowski@mimuw.edu.pl}{s.nowakowski@mimuw.edu.pl}
 }
