@@ -1,6 +1,6 @@
 #' @title Hierarchical Clustering for 1D
 #'
-#' @description Univariate hierarchical agglomerative clustering  with a few possible choices of a linkage function.
+#' @description Univariate hierarchical agglomerative clustering routine with a few possible choices of a linkage function.
 #'
 #' @param x a vector of 1D points to be clustered, or a distance structure as produced by \code{dist}.
 #' @param distance a logical value indicating, whether \code{x} is a vector of 1D points to be clustered (\code{distance = FALSE}, the default), or a distance structure (\code{distance = TRUE}).
@@ -31,10 +31,10 @@
 #' and for \code{x} in a form of a vector of 1D points (with the default \code{distance=FALSE} argument).
 #'
 #' @return A list object with S3 class \code{"hclust"}, compatible with a regular \code{stats::hclust} output:
-#' \item{merge}{a matrix with $n-1$ rows and 2 columns. Each $i$-th row of the matrix details merging performed at the stage $i$. If the \emph{singleton} cluster was merged
+#' \item{merge}{a matrix with n-1 rows and 2 columns. Each i-th row of the matrix details merging performed at the stage i. If the \emph{singleton} cluster was merged
 #' at this step, the value of the element is negative and its absolute value indicates the index of this point.
-#' Otherwise, a positive value, say $j$, of an element in $i$-th row indicate that at the stage $i$ a cluster created at a previous stage $j$ was merged.}
-#' \item{height}{a vector with $n-1$ values, with the $i$-th value indicating the distance between the two clusters merged at the stage $i$.}
+#' Otherwise, a positive value, say j, of an element in i-th row indicate that at the stage i a cluster created at a previous stage j was merged.}
+#' \item{height}{a vector with n-1 values, with the i-th value indicating the distance between the two clusters merged at the stage i.}
 #' \item{order}{a permutation of the original points sorting them in an increasing order.}
 #' \item{labels}{either point names, or point values, or point indices, in the order of availability.}
 #' \item{call}{the call which produced the results.}
