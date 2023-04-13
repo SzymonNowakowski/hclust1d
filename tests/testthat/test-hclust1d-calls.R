@@ -58,7 +58,7 @@ test_that("should preserve names or values or indices of points", {
 })
 
 test_that("should err on negative square distances", {
-  dissimilarity <- dist(c(one=1, two=2, three=-3))^2
+  dissimilarity <- dist(c(1, 2, -3))^2
   dissimilarity[2] <- -1
   for (tested_method in c(supported_methods(), "single_implemented_by_heap")) {
     expect_error(hclust1d(dissimilarity, distance = TRUE, squared = TRUE, method = tested_method))
