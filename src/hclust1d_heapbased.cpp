@@ -88,13 +88,13 @@ List hclust1d_heapbased(NumericVector & points, int method) {
       left_sums.push_back(points[left_part_leftish_indexes[i]]);
       right_sums.push_back(points[right_part_rightish_indexes[i]]);
     }
-    else {
-      distances.push_back(distance);   //centroid returns a squared euclidean distance
-      if (method == 5) {  //median aka weighted centroids
+    else if (method == 5) {  //median aka weighted centroids
+        distances.push_back(distance * distance);   //median returns a squared euclidean distance
         left_weighted_centroids.push_back(points[left_part_leftish_indexes[i]]);
         right_weighted_centroids.push_back(points[right_part_rightish_indexes[i]]);
-      }
-    }
+      }  //TODO _sums and _weighted_centroids variables play exactly the same role, maybe rename and join them ?
+      else
+        distances.push_back(distance);   //centroid returns a squared euclidean distance
   }
 
   //the following variables (some of them)
@@ -221,12 +221,12 @@ List hclust1d_heapbased(NumericVector & points, int method) {
          right_part_leftish_indexes[left_id] = left_part_leftish_indexes[id];
          break;
         }
-        case 5:   //median aka weighted centroids
-          update_key_by_id(priority_queue, left_id,
-                           id_weighted_centroid -
-                           left_weighted_centroids[left_id]);
+        case 5: {  //median aka weighted centroids
+          double distance = id_weighted_centroid - left_weighted_centroids[left_id];
+          update_key_by_id(priority_queue, left_id, distance * distance); //median returns a squared euclidean distance
           right_weighted_centroids[left_id] = id_weighted_centroid;
           break;
+        } //case
         }  //switch
       }
 
@@ -275,12 +275,12 @@ List hclust1d_heapbased(NumericVector & points, int method) {
           left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
           break;
         }
-        case 5:   //median aka weighted centroids
-          update_key_by_id(priority_queue, right_id,
-                           right_weighted_centroids[right_id] -
-                           id_weighted_centroid);
+        case 5: {  //median aka weighted centroids
+          double distance = right_weighted_centroids[right_id] - id_weighted_centroid;
+          update_key_by_id(priority_queue, right_id, distance * distance);  //median returns a squared euclidean distance
           left_weighted_centroids[right_id] = id_weighted_centroid;
           break;
+        } //case
         } //switch
       }
     }
