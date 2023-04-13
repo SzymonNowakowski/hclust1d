@@ -5,4 +5,4 @@
 #' @return A character vector with currently supported linkage methods.
 #'
 #' @export
-supported_methods <- function() c("complete", "average", "centroid", "single")
+supported_methods <- function() c("complete", "average", "centroid", "true_median", "median", "single")
