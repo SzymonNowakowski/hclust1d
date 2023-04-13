@@ -18,6 +18,6 @@ heap_experiments <- function() {
 }
 
 .sqrt <- function(squared_distances) {
-    .Call(`_hclust1d_sqrt`, squared_distances)
+    invisible(.Call(`_hclust1d_sqrt`, squared_distances))
 }
 

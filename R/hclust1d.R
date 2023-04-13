@@ -134,7 +134,7 @@ hclust1d <- function(x, distance = FALSE, squared = FALSE, method = "complete") 
     }
 
     if (squared == TRUE) {
-      x <- .sqrt(x)   # hclust1d has no need for squared distances, we sqrt them
+      .sqrt(x)   # hclust1d has no need for squared distances, we sqrt them in-place
     }
 
     x <- .dedistance(x, points_size)
