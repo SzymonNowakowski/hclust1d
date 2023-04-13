@@ -17,11 +17,11 @@ hclust1d(x, distance = FALSE, squared = FALSE, method = "complete")
 }
 \value{
 A list object with S3 class \code{"hclust"}, compatible with a regular \code{stats::hclust} output:
-\item{merge}{a matrix with n-1 rows and 2 columns. Each i-th row of the matrix details merging performed at the stage i. If the \emph{singleton} cluster was merged
-at this step, the value of the element is negative and its absolute value indicates the index of this point.
-Otherwise, a positive value, say j, of an element in i-th row indicate that at the stage i a cluster created at a previous stage j was merged.}
-\item{height}{a vector with n-1 values, with the i-th value indicating the distance between the two clusters merged at the stage i.}
-\item{order}{a permutation of the original points sorting them in an increasing order.}
+\item{merge}{a matrix with n-1 rows and 2 columns. Each i-th row of the matrix details merging performed at the i-th step of the algorithm. If the \emph{singleton} cluster was merged
+at this step, the value of the element is negative and its absolute value equals the index of this point.
+Otherwise, a positive value, say j, of an element in i-th row, indicates that at the stage i a cluster created at a previous stage j was merged.}
+\item{height}{a vector with n-1 values, with the i-th value indicating the distance between the two clusters merged at the i-th step of the algorithm.}
+\item{order}{a permutation of the input points sorting them in an increasing order. Since the sign of points computed from the distance structure can be arbitrarily chosen, in the case of a distance structure input, the order can be increasing or decreasing.}
 \item{labels}{either point names, or point values, or point indices, in the order of availability.}
 \item{call}{the call which produced the results.}
 \item{method}{the linkage method used for clustering.}
@@ -52,11 +52,12 @@ between the relevant clusters' centroids, although that behaviour is not well do
 The implementation in \code{hclust1d::hclust1d} follows that behaviour in full.
 
 Also,
-\code{stats::hclust} expects \emph{squared} euclidean distance structure as input for \code{method="centroid"} and \code{method="median"}, although the latter is not well documented.
+\code{stats::hclust} expects \emph{squared} euclidean distance structure as input for \code{method="centroid"} and \code{method="median"}, although the latter is not well documented, either. Squared
+distance is not a proper distance (a triangle inequality may not be maintained), so it should be considered \emph{dissimilarity} instead.
 
 To retain compatibility, \code{hlust1d::hclust1d} accepts \code{x} in a form of a squared euclidean distance structure between points as well
-(with both \code{distance} and \code{squared} arguments set to \code{TRUE}). Also, note that
-\code{hlust1d::hclust1d} returns the same heights for unsquared distances in \code{x} (with \code{distance=TRUE} setting and the default \code{squared=FALSE} argument)
+(indicated by both \code{distance} and \code{squared} arguments set to \code{TRUE}). Also, note that
+\code{hlust1d::hclust1d} returns the same heights for unsquared proper distances in \code{x} (with \code{distance=TRUE} setting and the default \code{squared=FALSE} argument)
 and for \code{x} in a form of a vector of 1D points (with the default \code{distance=FALSE} argument). Please consult the \code{Examples} section below for further reference on that behaviour.
 }
 \examples{
@@ -106,5 +107,5 @@ plot(dendrogram) # plots the resulting dendrogram
 
 }
 \seealso{
-\code{\link{supported_methods}} for listing of all currently supported linkage methods, \code{\link{supported_methods}} for listing of all currently supported distance methods.
+\code{\link{supported_methods}} for listing of all currently supported linkage methods, \code{\link{supported_dist.methods}} for listing of all currently supported distance methods.
 }

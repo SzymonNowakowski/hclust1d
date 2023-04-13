@@ -54,12 +54,23 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// sqrt
+void sqrt(NumericVector& squared_distances);
+RcppExport SEXP _hclust1d_sqrt(SEXP squared_distancesSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector& >::type squared_distances(squared_distancesSEXP);
+    sqrt(squared_distances);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_hclust1d_dedistance", (DL_FUNC) &_hclust1d_dedistance, 2},
     {"_hclust1d_hclust1d_heapbased", (DL_FUNC) &_hclust1d_hclust1d_heapbased, 2},
     {"_hclust1d_hclust1d_single", (DL_FUNC) &_hclust1d_hclust1d_single, 1},
     {"_hclust1d_heap_experiments", (DL_FUNC) &_hclust1d_heap_experiments, 0},
+    {"_hclust1d_sqrt", (DL_FUNC) &_hclust1d_sqrt, 1},
     {NULL, NULL, 0}
 };
 

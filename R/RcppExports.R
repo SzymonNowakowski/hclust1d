@@ -17,3 +17,7 @@ heap_experiments <- function() {
     invisible(.Call(`_hclust1d_heap_experiments`))
 }
 
+.sqrt <- function(squared_distances) {
+    invisible(.Call(`_hclust1d_sqrt`, squared_distances))
+}
+

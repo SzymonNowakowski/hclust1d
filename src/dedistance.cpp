@@ -1,6 +1,5 @@
 #include <Rcpp.h>
 #include <vector>
-#include <cmath>        // std::abs
 using namespace Rcpp;
 
 // [[Rcpp::export(.dedistance)]]
