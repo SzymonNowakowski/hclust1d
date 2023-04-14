@@ -14,6 +14,8 @@ List hclust1d_heapbased(NumericVector & points, int method) {
 //          1 - complete
 //          2 - average
 //          3 - centroid
+//          4 - true_median
+//          5 - median aka weighted centroids
 
 // method == 0 is intentionally undocumented
 // intended for efficiency tests
@@ -24,7 +26,19 @@ List hclust1d_heapbased(NumericVector & points, int method) {
 
   std::vector<int> order_points(points_size);
   order(points, order_points);
+  std::vector<int> reverse_order_points(points_size);  //needed for the median linkage
 
+  if (method == 4) //true median
+    order<int>(order_points, reverse_order_points);
+ //   ALWAYS x == x[order(x)][order(order(x))] , order(order(x)) is the inverse permutation of order(x)
+
+  auto median = [&](int leftmost_index_in_unordered, int cluster_count) {
+    int leftmost_index_in_ordered = reverse_order_points[leftmost_index_in_unordered];
+    int midpoint_index_in_ordered = leftmost_index_in_ordered + cluster_count / 2;
+    if (cluster_count % 2 == 1)
+      return points[order_points[midpoint_index_in_ordered]];
+    return (points[order_points[midpoint_index_in_ordered - 1]] + points[order_points[midpoint_index_in_ordered]])/2.0;
+  };
 
   //the sequence indexed by the numbers of intervals (there are points_size - 1 intervals)
   //and returning an index of a left point in each interval (as if they were ordered, but they are not)
@@ -59,23 +73,25 @@ List hclust1d_heapbased(NumericVector & points, int method) {
     right_part_rightish_indexes[i] = order_points[right_seq(i)];
 
   std::vector<double> distances;
-  //the following variables are required for centroid linkage
-  std::vector<double> left_sums;
-  std::vector<double> right_sums;
+  //the following variables are required for median and centroid linkage
+  std::vector<double> left_centroid_aggregates;
+  std::vector<double> right_centroid_aggregates;
+
   //the sequence of distances within intervals (there are points_size - 1 intervals)
   for (int i = 0; i < points_size - 1; i++) {
     double distance = points[right_part_rightish_indexes[i]] - points[left_part_leftish_indexes[i]];
 
-    if (method == 3) {  //centroid
-      distances.push_back(distance * distance);   //centroid returns a squared euclidean distance
-      left_sums.push_back(points[left_part_leftish_indexes[i]]);
-      right_sums.push_back(points[right_part_rightish_indexes[i]]);
+    if (method == 3 or method == 5) {
+      distances.push_back(distance * distance);   //centroid and median (=weighted centroid) returns a squared euclidean distance
+      left_centroid_aggregates.push_back(points[left_part_leftish_indexes[i]]);
+      right_centroid_aggregates.push_back(points[right_part_rightish_indexes[i]]);
     }
     else
-      distances.push_back(distance);   //centroid returns a squared euclidean distance
+        distances.push_back(distance);   //centroid returns a squared euclidean distance
   }
 
-  //the following variables are required for average linkage
+  //the following variables (some of them)
+  // are required for some of the linkages
   //each interval (which is a possible merge opportunity)
   //               constitutes of 2 clusters - the left one and the write one
   //at the beginning they are both just the singletons
@@ -83,8 +99,8 @@ List hclust1d_heapbased(NumericVector & points, int method) {
   std::vector<double> left_part_rightish_weighted_distance_sums(points_size - 1, 0.0);
   std::vector<double> right_part_leftish_weighted_distance_sums(points_size - 1, 0.0);
   std::vector<double> right_part_rightish_weighted_distance_sums(points_size - 1, 0.0);
-  std::vector<int> left_part_cluster_counts(points_size - 1, 1);             //needed for centroid linkage too
-  std::vector<int> right_part_cluster_counts(points_size - 1, 1);            //needed for centroid linkage too
+  std::vector<int> left_part_cluster_counts(points_size - 1, 1);
+  std::vector<int> right_part_cluster_counts(points_size - 1, 1);
   std::vector<int> left_part_rightish_indexes = left_part_leftish_indexes;
   std::vector<int> right_part_leftish_indexes = right_part_rightish_indexes;
 
@@ -125,11 +141,9 @@ List hclust1d_heapbased(NumericVector & points, int method) {
     height[stage] = key_id.first;
 
     int id_cluster_count;
-    double id_sum;
+    double id_centroid_aggregate;
     double id_rightish_weighted_distance_sums;
     double id_leftish_weighted_distance_sums;
-
-
 
     if (method == 2) { //"average"  //calculate statistics of the currently merged cluster
       id_cluster_count = left_part_cluster_counts[id] + right_part_cluster_counts[id];
@@ -144,7 +158,13 @@ List hclust1d_heapbased(NumericVector & points, int method) {
     }
     if (method==3) {  //"centroid"
       id_cluster_count = left_part_cluster_counts[id] + right_part_cluster_counts[id];
-      id_sum = left_sums[id] + right_sums[id];
+      id_centroid_aggregate = left_centroid_aggregates[id] + right_centroid_aggregates[id];
+    }
+    if (method==4) {  //"true_median"
+      id_cluster_count = left_part_cluster_counts[id] + right_part_cluster_counts[id];
+    }
+    if (method==5) {  //"median" a.k.a weighted centroid
+      id_centroid_aggregate = (left_centroid_aggregates[id] + right_centroid_aggregates[id])/2.0;
     }
 
     if (left_id > -1) {
@@ -153,33 +173,53 @@ List hclust1d_heapbased(NumericVector & points, int method) {
         right_merges[left_id] = stage + 1;
 
         switch (method) {
-          case 0:   //single_implemented_by_heap linkage
-            break;
-          case 1:  //complete
-            update_key_by_id(priority_queue, left_id, points[right_part_rightish_indexes[id]] - points[left_part_leftish_indexes[left_id]]);
-            right_part_rightish_indexes[left_id] = right_part_rightish_indexes[id];
-            break;
-          case 2:  //average linkage
-            //id cluster just got merged
-            update_key_by_id(priority_queue, left_id,
-                             left_part_rightish_weighted_distance_sums[left_id] / left_part_cluster_counts[left_id] +
-                             id_leftish_weighted_distance_sums / id_cluster_count +
-                             points[left_part_leftish_indexes[id]] - points[left_part_rightish_indexes[left_id]]);
+        case 0:   //single_implemented_by_heap linkage
+          break;
+        case 1:  //complete
+          update_key_by_id(priority_queue, left_id,
+                           points[right_part_rightish_indexes[id]] -
+                           points[left_part_leftish_indexes[left_id]]);
+          right_part_rightish_indexes[left_id] = right_part_rightish_indexes[id];
+          break;
+        case 2:  //average linkage
+          //id cluster just got merged
+          update_key_by_id(priority_queue, left_id,
+                           left_part_rightish_weighted_distance_sums[left_id] / left_part_cluster_counts[left_id] +
+                           id_leftish_weighted_distance_sums / id_cluster_count +
+                           points[left_part_leftish_indexes[id]] - points[left_part_rightish_indexes[left_id]]);
 
-            right_part_leftish_weighted_distance_sums[left_id] = id_leftish_weighted_distance_sums;
-            right_part_rightish_weighted_distance_sums[left_id] = id_rightish_weighted_distance_sums;
-            right_part_cluster_counts[left_id] = id_cluster_count;
-            right_part_leftish_indexes[left_id] = left_part_leftish_indexes[id];
-            right_part_rightish_indexes[left_id] = right_part_rightish_indexes[id];
-            break;
-          case 3:  //centroid works on a squared euclidean distance in theory, but for 1d it makes no difference
-            double distance = id_sum / id_cluster_count -
-                              left_sums[left_id] / left_part_cluster_counts[left_id];
-            update_key_by_id(priority_queue, left_id, distance * distance); //centroid returns a squared euclidean distance
-            right_sums[left_id] = id_sum;
-            right_part_cluster_counts[left_id] = id_cluster_count;
-            break;
+          right_part_leftish_weighted_distance_sums[left_id] = id_leftish_weighted_distance_sums;
+          right_part_rightish_weighted_distance_sums[left_id] = id_rightish_weighted_distance_sums;
+          right_part_cluster_counts[left_id] = id_cluster_count;
+          right_part_leftish_indexes[left_id] = left_part_leftish_indexes[id];
+          right_part_rightish_indexes[left_id] = right_part_rightish_indexes[id];
+          break;
+        case 3: { //centroid works on a squared euclidean distance in theory, but for 1d it makes no difference
+          double distance = id_centroid_aggregate / id_cluster_count -
+                            left_centroid_aggregates[left_id] / left_part_cluster_counts[left_id];
+          update_key_by_id(priority_queue, left_id, distance * distance); //centroid returns a squared euclidean distance
+          right_centroid_aggregates[left_id] = id_centroid_aggregate;
+          right_part_cluster_counts[left_id] = id_cluster_count;
+          break;
         }
+        case 4: {  //true median linkage
+            //id cluster just got merged
+         double distance = median(left_part_leftish_indexes[id],
+                                  id_cluster_count) -
+                           median(left_part_leftish_indexes[left_id],
+                                  left_part_cluster_counts[left_id]);
+         update_key_by_id(priority_queue, left_id, distance);
+         right_part_cluster_counts[left_id] = id_cluster_count;
+         right_part_leftish_indexes[left_id] = left_part_leftish_indexes[id];
+         break;
+        }
+        case 5: {  //median aka weighted centroids
+          double distance = id_centroid_aggregate - left_centroid_aggregates[left_id];
+          update_key_by_id(priority_queue, left_id, distance * distance); //median returns a squared euclidean distance
+          right_centroid_aggregates[left_id] = id_centroid_aggregate;
+          break;
+        } //case
+        }  //switch
       }
 
     if (right_id > -1) {
@@ -188,32 +228,52 @@ List hclust1d_heapbased(NumericVector & points, int method) {
         left_merges[right_id] = stage + 1;
 
         switch (method) {
-          case 0:   //single_implemented_by_heap linkage
-            break;
-          case 1:   //complete linkage
-            update_key_by_id(priority_queue, right_id, points[right_part_rightish_indexes[right_id]] - points[left_part_leftish_indexes[id]]);
-            left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
-            break;
-          case 2:  //average linkage
-            update_key_by_id(priority_queue, right_id,
-                             id_rightish_weighted_distance_sums / id_cluster_count +
-                             right_part_leftish_weighted_distance_sums[right_id] / right_part_cluster_counts[right_id] +
-                             points[right_part_leftish_indexes[right_id]] - points[right_part_rightish_indexes[id]]);
+        case 0:   //single_implemented_by_heap linkage
+          break;
+        case 1:   //complete linkage
+          update_key_by_id(priority_queue, right_id,
+                           points[right_part_rightish_indexes[right_id]] -
+                           points[left_part_leftish_indexes[id]]);
+          left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
+          break;
+        case 2:  //average linkage
+          update_key_by_id(priority_queue, right_id,
+                           id_rightish_weighted_distance_sums / id_cluster_count +
+                           right_part_leftish_weighted_distance_sums[right_id] / right_part_cluster_counts[right_id] +
+                           points[right_part_leftish_indexes[right_id]] - points[right_part_rightish_indexes[id]]);
 
-            left_part_leftish_weighted_distance_sums[right_id] = id_leftish_weighted_distance_sums;
-            left_part_rightish_weighted_distance_sums[right_id] = id_rightish_weighted_distance_sums;
-            left_part_cluster_counts[right_id] = id_cluster_count;
-            left_part_rightish_indexes[right_id] = right_part_rightish_indexes[id];
-            left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
-            break;
-          case 3:  //centroid works on a squared euclidean distance in theory, but for 1d it makes no difference
-            double distance = right_sums[right_id] / right_part_cluster_counts[right_id] -
-                              id_sum / id_cluster_count;
-            update_key_by_id(priority_queue, right_id, distance * distance); //centroid returns a squared euclidean distance
-            left_sums[right_id] = id_sum;
-            left_part_cluster_counts[right_id] = id_cluster_count;
-            break;
+          left_part_leftish_weighted_distance_sums[right_id] = id_leftish_weighted_distance_sums;
+          left_part_rightish_weighted_distance_sums[right_id] = id_rightish_weighted_distance_sums;
+          left_part_cluster_counts[right_id] = id_cluster_count;
+          left_part_rightish_indexes[right_id] = right_part_rightish_indexes[id];
+          left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
+          break;
+        case 3: { //centroid works on a squared euclidean distance in theory, but for 1d it makes no difference
+          double distance = right_centroid_aggregates[right_id] / right_part_cluster_counts[right_id] -
+                            id_centroid_aggregate / id_cluster_count;
+          update_key_by_id(priority_queue, right_id, distance * distance); //centroid returns a squared euclidean distance
+          left_centroid_aggregates[right_id] = id_centroid_aggregate;
+          left_part_cluster_counts[right_id] = id_cluster_count;
+          break;
         }
+        case 4: {  //true median linkage
+          //id cluster just got merged
+          double distance = median(right_part_leftish_indexes[right_id],
+                                   right_part_cluster_counts[right_id]) -
+                            median(left_part_leftish_indexes[id],
+                                   id_cluster_count);
+          update_key_by_id(priority_queue, right_id, distance);
+          left_part_cluster_counts[right_id] = id_cluster_count;
+          left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
+          break;
+        }
+        case 5: {  //median aka weighted centroids
+          double distance = right_centroid_aggregates[right_id] - id_centroid_aggregate;
+          update_key_by_id(priority_queue, right_id, distance * distance);  //median returns a squared euclidean distance
+          left_centroid_aggregates[right_id] = id_centroid_aggregate;
+          break;
+        } //case
+        } //switch
       }
     }
 

@@ -1,7 +1,11 @@
 
+# hclust1d 0.0.1.9003
+
+- Added `true_median` and `median` (aka *weighted centroid, WPGMC*) linkage support
+
 # hclust1d 0.0.1.9002
 
-- Added `centroid` linkage support
+- Added `centroid` (*UPGMC*) linkage support
 
 # hclust1d 0.0.1.9001
 

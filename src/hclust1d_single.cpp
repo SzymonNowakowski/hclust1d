@@ -71,7 +71,7 @@ List hclust1d_single(NumericVector & points) {
   }
 
   std::vector<int> order_distances(points_size-1);
-  order(distances, order_distances);
+  order<double>(distances, order_distances);
   IntegerMatrix merge(points_size - 1 , 2 );
   NumericVector height(points_size - 1);
 
