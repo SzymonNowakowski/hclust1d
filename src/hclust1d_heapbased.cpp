@@ -12,10 +12,11 @@ List hclust1d_heapbased(NumericVector & points, int method) {
 // general linkage case with a heap
 // methods: 0 - single implemented by heap  (undocumented behaviour)
 //          1 - complete
-//          2 - average
-//          3 - centroid
+//          2 - average (UPGMA)
+//          3 - centroid (UPGMC)
 //          4 - true_median
-//          5 - median aka weighted centroids
+//          5 - median aka weighted centroids (WPGMC)
+//          6 - mcquitty (WPGMA)
 
 // method == 0 is intentionally undocumented
 // intended for efficiency tests
@@ -166,6 +167,14 @@ List hclust1d_heapbased(NumericVector & points, int method) {
     if (method==5) {  //"median" a.k.a weighted centroid
       id_centroid_aggregate = (left_centroid_aggregates[id] + right_centroid_aggregates[id])/2.0;
     }
+    if (method == 6) { //"mcquitty" WPGMA
+      id_rightish_weighted_distance_sums = 0.5 * left_part_rightish_weighted_distance_sums[id] +
+                                           0.5 * right_part_rightish_weighted_distance_sums[id] +
+                                           points[right_part_rightish_indexes[id]] - points[left_part_rightish_indexes[id]];
+      id_leftish_weighted_distance_sums = 0.5 * left_part_leftish_weighted_distance_sums[id] +
+                                          0.5 * right_part_leftish_weighted_distance_sums[id] +
+                                          points[right_part_leftish_indexes[id]] - points[left_part_leftish_indexes[id]];
+    }
 
     if (left_id > -1) {
 
@@ -218,7 +227,18 @@ List hclust1d_heapbased(NumericVector & points, int method) {
           update_key_by_id(priority_queue, left_id, distance * distance); //median returns a squared euclidean distance
           right_centroid_aggregates[left_id] = id_centroid_aggregate;
           break;
-        } //case
+        }
+        case 6:  //mcquitty linkage
+          //id cluster just got merged
+          update_key_by_id(priority_queue, left_id,
+                           0.5 * left_part_rightish_weighted_distance_sums[left_id] +
+                           0.5 * id_leftish_weighted_distance_sums +
+                           points[left_part_leftish_indexes[id]] - points[left_part_rightish_indexes[left_id]]);
+
+          right_part_leftish_weighted_distance_sums[left_id] = id_leftish_weighted_distance_sums;
+          right_part_rightish_weighted_distance_sums[left_id] = id_rightish_weighted_distance_sums;
+
+          break;
         }  //switch
       }
 
@@ -272,7 +292,17 @@ List hclust1d_heapbased(NumericVector & points, int method) {
           update_key_by_id(priority_queue, right_id, distance * distance);  //median returns a squared euclidean distance
           left_centroid_aggregates[right_id] = id_centroid_aggregate;
           break;
-        } //case
+        }
+        case 6:  //mcquitty linkage
+          update_key_by_id(priority_queue, right_id,
+                           0.5 * id_rightish_weighted_distance_sums +
+                           0.5 * right_part_leftish_weighted_distance_sums[right_id] +
+                           points[right_part_leftish_indexes[right_id]] - points[right_part_rightish_indexes[id]]);
+
+          left_part_leftish_weighted_distance_sums[right_id] = id_leftish_weighted_distance_sums;
+          left_part_rightish_weighted_distance_sums[right_id] = id_rightish_weighted_distance_sums;
+
+          break;
         } //switch
       }
     }

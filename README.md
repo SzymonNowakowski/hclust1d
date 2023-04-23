@@ -7,7 +7,7 @@
 
 # Introduction
 
-Package `hclust1d` (Hierarchical CLUSTering for 1D) is a suit of algorithms for univariate agglomerative hierarchical clustering  (with a few possible choices of a linkage function, please consult `supported_methods` for the current list) in $\mathcal{O}(n\log n)$ time. 
+Package `hclust1d` (Hierarchical CLUSTering for 1D) is a suit of algorithms for univariate agglomerative hierarchical clustering  (with a comprehensive list of choices of a linkage function, please consult `supported_methods` for the current list) in $\mathcal{O}(n\log n)$ time. 
 
 The better algorithmic time complexity (compared to multidimensional hierarchical clustering) paired with its efficient `C++` implementation make `hclust1d` very fast. The computational time beats `stats::hclust` on all sizes of data and is *en par* with `fastcluster::hclust` with small data sizes. However, it is of orders of magnitude faster than both multivariate clustering routines on larger data sizes.
 

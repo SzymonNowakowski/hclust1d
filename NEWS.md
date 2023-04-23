@@ -1,10 +1,11 @@
 
-# hclust1d 0.0.1.9003
+# hclust1d 0.0.1.9004
  
+- Added `mcquitty` (*WPGMC*) linkage support
 
 # hclust1d 0.0.1.9003
 
-- Added `true_median` and `median` (aka *weighted centroid, WPGMC*) linkage support
+- Added `true_median` and `median` (*weighted centroid, WPGMC*) linkage support
 
 # hclust1d 0.0.1.9002
 

@@ -5,7 +5,7 @@
 #' @param x a vector of 1D points to be clustered, or a distance structure as produced by \code{dist}.
 #' @param distance a logical value indicating, whether \code{x} is a vector of 1D points to be clustered (\code{distance = FALSE}, the default), or a distance structure (\code{distance = TRUE}).
 #' @param squared a logical value indicating, whether \code{distance} is squared (\code{squared = TRUE}) or not (\code{squared = FALSE}, the default). Its value is irrelevant for \code{distance = FALSE} setting.
-#' @param method linkage method, with \code{"complete"} as a default.
+#' @param method linkage method, with \code{"complete"} as a default. See \code{\link{supported_methods}} for the complete list.
 #'
 #' @details If \code{x} is a distance matrix, the first step of the algorithm is computing a conforming vector of 1D points (with arbitrary shift and sign choices).
 #'
