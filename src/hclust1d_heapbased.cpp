@@ -199,7 +199,9 @@ List hclust1d_heapbased(NumericVector & points, int method) {
 
           right_part_leftish_weighted_distance_sums[left_id] = id_leftish_weighted_distance_sums;
           right_part_rightish_weighted_distance_sums[left_id] = id_rightish_weighted_distance_sums;
+
           right_part_cluster_counts[left_id] = id_cluster_count;
+
           right_part_leftish_indexes[left_id] = left_part_leftish_indexes[id];
           right_part_rightish_indexes[left_id] = right_part_rightish_indexes[id];
           break;
@@ -238,6 +240,8 @@ List hclust1d_heapbased(NumericVector & points, int method) {
           right_part_leftish_weighted_distance_sums[left_id] = id_leftish_weighted_distance_sums;
           right_part_rightish_weighted_distance_sums[left_id] = id_rightish_weighted_distance_sums;
 
+          right_part_leftish_indexes[left_id] = left_part_leftish_indexes[id];
+          right_part_rightish_indexes[left_id] = right_part_rightish_indexes[id];
           break;
         }  //switch
       }
@@ -264,7 +268,9 @@ List hclust1d_heapbased(NumericVector & points, int method) {
 
           left_part_leftish_weighted_distance_sums[right_id] = id_leftish_weighted_distance_sums;
           left_part_rightish_weighted_distance_sums[right_id] = id_rightish_weighted_distance_sums;
+
           left_part_cluster_counts[right_id] = id_cluster_count;
+
           left_part_rightish_indexes[right_id] = right_part_rightish_indexes[id];
           left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
           break;
@@ -302,6 +308,8 @@ List hclust1d_heapbased(NumericVector & points, int method) {
           left_part_leftish_weighted_distance_sums[right_id] = id_leftish_weighted_distance_sums;
           left_part_rightish_weighted_distance_sums[right_id] = id_rightish_weighted_distance_sums;
 
+          left_part_rightish_indexes[right_id] = right_part_rightish_indexes[id];
+          left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
           break;
         } //switch
       }
