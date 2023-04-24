@@ -1,4 +1,6 @@
 
+# hclust1d 0.0.1.9005
+
 # hclust1d 0.0.1.9004
  
 - Added `mcquitty` (*WPGMC*) linkage support
