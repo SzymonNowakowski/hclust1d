@@ -1,6 +1,8 @@
 
 # hclust1d 0.0.1.9005
 
+- Added `ward.D` linkage support
+
 # hclust1d 0.0.1.9004
  
 - Added `mcquitty` (*WPGMC*) linkage support
