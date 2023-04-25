@@ -78,7 +78,7 @@ test_that("equality of results with stats::hclust, a vector with double repetiti
 
         squared <- FALSE
         distance <- dist(x)
-        if (tested_method %in% c("centroid", "median")) {
+        if (tested_method %in% c("centroid", "median", "ward.D")) {
           squared <- TRUE
           distance <- distance^2
         }
