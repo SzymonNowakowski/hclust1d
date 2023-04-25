@@ -4,6 +4,7 @@
 #include <assert.h>
 #include "order.h"
 #include "heap.h"
+#include <cmath>  //std::sqrt
 
 using namespace Rcpp;
 
@@ -18,6 +19,7 @@ List hclust1d_heapbased(NumericVector & points, int method) {
 //          5 - median aka weighted centroids (WPGMC)
 //          6 - mcquitty (WPGMA)
 //          7 - ward.D
+//          8 - ward.D2
 
 // method == 0 is intentionally undocumented
 // intended for efficiency tests
@@ -83,11 +85,13 @@ List hclust1d_heapbased(NumericVector & points, int method) {
   for (int i = 0; i < points_size - 1; i++) {
     double distance = points[right_part_rightish_indexes[i]] - points[left_part_leftish_indexes[i]];
 
-    if (method == 3 or method == 5 or method == 7) {
-      distances.push_back(distance * distance);   //centroid and median (=weighted centroid) returns a squared euclidean distance
+    if (method == 3 or method == 5 or method == 7 or method == 8) {
       left_centroid_aggregates.push_back(points[left_part_leftish_indexes[i]]);
       right_centroid_aggregates.push_back(points[right_part_rightish_indexes[i]]);
     }
+
+    if (method == 3 or method == 5 or method == 7)
+      distances.push_back(distance * distance);   //centroid and median (=weighted centroid) returns a squared euclidean distance
     else
         distances.push_back(distance);   //centroid returns a squared euclidean distance
   }
@@ -158,7 +162,7 @@ List hclust1d_heapbased(NumericVector & points, int method) {
                                           right_part_cluster_counts[id] *
                                           (points[right_part_leftish_indexes[id]] - points[left_part_leftish_indexes[id]]);
     }
-    if (method == 3 or method == 7) {  //"centroid" or ward.D
+    if (method == 3 or method == 7 or method == 8) {  //"centroid" or ward.D or ward.D2
       id_cluster_count = left_part_cluster_counts[id] + right_part_cluster_counts[id];
       id_centroid_aggregate = left_centroid_aggregates[id] + right_centroid_aggregates[id];
     }
@@ -178,6 +182,9 @@ List hclust1d_heapbased(NumericVector & points, int method) {
     }
 
     if (left_id > -1) {
+
+        bool mult = false;
+        bool sqrt = false;
 
         interval_right_ids[left_id] = right_id;
         right_merges[left_id] = stage + 1;
@@ -206,10 +213,24 @@ List hclust1d_heapbased(NumericVector & points, int method) {
           right_part_leftish_indexes[left_id] = left_part_leftish_indexes[id];
           right_part_rightish_indexes[left_id] = right_part_rightish_indexes[id];
           break;
+        case 8:  //ward.D2
+          sqrt = true;
+        case 7:  //ward.D
+          mult = true;
         case 3: { //centroid works on a squared euclidean distance in theory, but for 1d it makes no difference
             double distance = id_centroid_aggregate / id_cluster_count -
                               left_centroid_aggregates[left_id] / left_part_cluster_counts[left_id];
-            update_key_by_id(priority_queue, left_id, distance * distance); //centroid returns a squared euclidean distance
+
+            distance = distance * distance;
+
+            if (mult)
+              distance = 2.0 * distance *
+                         (left_part_cluster_counts[left_id] * id_cluster_count) /
+                         (left_part_cluster_counts[left_id] + id_cluster_count);
+            if (sqrt)
+              distance = std::sqrt(distance);
+
+            update_key_by_id(priority_queue, left_id, distance); //centroid, ward.D returns a squared euclidean distance
             right_centroid_aggregates[left_id] = id_centroid_aggregate;
             right_part_cluster_counts[left_id] = id_cluster_count;
             break;
@@ -244,21 +265,14 @@ List hclust1d_heapbased(NumericVector & points, int method) {
           right_part_leftish_indexes[left_id] = left_part_leftish_indexes[id];
           right_part_rightish_indexes[left_id] = right_part_rightish_indexes[id];
           break;
-        case 7: { //ward.D
-            double distance = id_centroid_aggregate / id_cluster_count -
-                              left_centroid_aggregates[left_id] / left_part_cluster_counts[left_id];
-            distance = 2.0 * distance * distance *
-                       (left_part_cluster_counts[left_id] * id_cluster_count) /
-                       (left_part_cluster_counts[left_id] + id_cluster_count);
-            update_key_by_id(priority_queue, left_id, distance);
-            right_centroid_aggregates[left_id] = id_centroid_aggregate;
-            right_part_cluster_counts[left_id] = id_cluster_count;
-            break;
-          }  //case
+
         }  //switch
       }
 
     if (right_id > -1) {
+
+        bool mult = false;
+        bool sqrt = false;
 
         interval_left_ids[right_id] = left_id;
         left_merges[right_id] = stage + 1;
@@ -286,10 +300,24 @@ List hclust1d_heapbased(NumericVector & points, int method) {
           left_part_rightish_indexes[right_id] = right_part_rightish_indexes[id];
           left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
           break;
+        case 8:  //ward.D2
+          sqrt = true;
+        case 7:  //ward.D
+          mult = true;
         case 3: { //centroid works on a squared euclidean distance in theory, but for 1d it makes no difference
             double distance = right_centroid_aggregates[right_id] / right_part_cluster_counts[right_id] -
                               id_centroid_aggregate / id_cluster_count;
-            update_key_by_id(priority_queue, right_id, distance * distance); //centroid returns a squared euclidean distance
+
+            distance = distance * distance;
+
+            if (mult)
+              distance = 2.0 * distance *
+                         (right_part_cluster_counts[right_id] * id_cluster_count) /
+                         (right_part_cluster_counts[right_id] + id_cluster_count);
+            if (sqrt)
+              distance = std::sqrt(distance);
+
+            update_key_by_id(priority_queue, right_id, distance); //centroid, ward.D returns a squared euclidean distance
             left_centroid_aggregates[right_id] = id_centroid_aggregate;
             left_part_cluster_counts[right_id] = id_cluster_count;
             break;
@@ -323,18 +351,7 @@ List hclust1d_heapbased(NumericVector & points, int method) {
           left_part_rightish_indexes[right_id] = right_part_rightish_indexes[id];
           left_part_leftish_indexes[right_id] = left_part_leftish_indexes[id];
           break;
-        case 7: { //ward.D
-            double distance = right_centroid_aggregates[right_id] / right_part_cluster_counts[right_id] -
-                              id_centroid_aggregate / id_cluster_count;
-            distance = 2.0 *distance * distance *
-                      (right_part_cluster_counts[right_id] * id_cluster_count) /
-                      (right_part_cluster_counts[right_id] + id_cluster_count);
 
-            update_key_by_id(priority_queue, right_id, distance); //centroid returns a squared euclidean distance
-            left_centroid_aggregates[right_id] = id_centroid_aggregate;
-            left_part_cluster_counts[right_id] = id_cluster_count;
-            break;
-          }
         } //switch
       }
     }
