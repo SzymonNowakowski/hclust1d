@@ -1,7 +1,7 @@
 
 # hclust1d 0.0.1.9005
 
-- Added `ward.D` linkage support
+- Added `ward.D`, `ward.D2` linkage support and a getting started vignette
 
 # hclust1d 0.0.1.9004
  

@@ -10,6 +10,7 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 Suggests: 
     knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 URL: https://github.com/SzymonNowakowski/hclust1d 
 BugReports: https://github.com/SzymonNowakowski/hclust1d/issues
@@ -19,3 +20,4 @@ LinkingTo:
 Imports: 
     Rcpp
 Config/testthat/edition: 3
+VignetteBuilder: knitr

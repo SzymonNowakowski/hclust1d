@@ -1,0 +1,67 @@
+---
+title: "Getting Started with hclust1d"
+author: "Szymon Nowakowski"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{getting-started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# This document
+
+The purpose of this vignette is to introduce readers to `hclust1d` package, 
+and bring them up to speed by providing a simple
+use case example.
+
+
+# `hclust1d` package
+
+The name of `hclust1d` package stands for Hierarchical CLUSTering for 1D. The package contains a suit of algorithms for univariate agglomerative hierarchical clustering (with a comprehensive list of choices of a linkage function, matching all possible choices in `stats::hclust`).
+
+Hierarchical clustering in the 1D setting works in $\mathcal{O}(n\log n)$ time. 
+
+# OK, so let's get started
+
+To load the package into memory execute the following line:
+
+```{r setup}
+library(hclust1d)
+```
+
+We will work with random normally distributed data points in this vignette.
+
+Working with `hclust1d` is very simple an requires only passing the data points vector and
+optionally a linkage method to `hclust1d` function (complete linkage is used as a default, if the linkage method is not provided). The simplest example of a complete linkage clustering:
+
+```{r}
+dendrogram <- hclust1d(rnorm(100))
+```
+
+The `hclust1d` function returns an object of the same type that is returned from `stats::hclust` (a list object with S3 class \code{"hclust"}, to be specific).
+This makes it straightforward to further work with the clustering results:
+
+- we can plot it:
+
+```{r}
+plot(dendrogram)
+```
+
+- we can print it:
+
+```{r}
+print(dendrogram)
+```
+
+- we can derive a summary of a result, too:
+
+```{r}
+summary(dendrogram)
+```
