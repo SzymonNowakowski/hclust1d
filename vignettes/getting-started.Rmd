@@ -1,5 +1,5 @@
 ---
-title: "Getting Started with hclust1d"
+title: "Getting started with hclust1d"
 author: "Szymon Nowakowski"
 output: rmarkdown::html_vignette
 vignette: >
@@ -24,9 +24,11 @@ use case example.
 
 # `hclust1d` package
 
-The name of `hclust1d` package stands for Hierarchical CLUSTering for 1D. The package contains a suit of algorithms for univariate agglomerative hierarchical clustering (with a comprehensive list of choices of a linkage function, matching all possible choices in `stats::hclust`).
+The name of `hclust1d` package stands for Hierarchical CLUSTering for 1D. The package contains a suit of algorithms for univariate agglomerative hierarchical clustering. It supports a comprehensive list of choices of a linkage function, matching all possible choices in `stats::hclust` with an addition of a `true_median` linkage.
 
 Hierarchical clustering in the 1D setting works in $\mathcal{O}(n\log n)$ time. 
+
+If data is 1D then it is simply a matter of a plug-and-play replacement of `stats::hclust` calls to be able to use the advantage of our efficient implementation of the asymptotically much more efficient algorithm.
 
 # OK, so let's get started
 
@@ -42,26 +44,26 @@ Working with `hclust1d` is very simple an requires only passing the data points 
 optionally a linkage method to `hclust1d` function (complete linkage is used as a default, if the linkage method is not provided). The simplest example of a complete linkage clustering:
 
 ```{r}
-dendrogram <- hclust1d(rnorm(100))
+result <- hclust1d(rnorm(10))
 ```
 
 The `hclust1d` function returns an object of the same type that is returned from `stats::hclust` (a list object with S3 class \code{"hclust"}, to be specific).
 This makes it straightforward to further work with the clustering results:
 
 - we can plot it:
+  ```{r plot, fig.height=4, fig.width=6, small.mar=TRUE}
+  plot(result)
+  ```
 
-```{r}
-plot(dendrogram)
-```
+- we can convert it to a dendrogram and further work with it
+  ```{r dendrogram_plot, fig.height=4, fig.width=6, small.mar=TRUE}
+  dendrogram <- as.dendrogram(result)
+  plot(dendrogram, type = "triangle", ylab = "Height")
+  ```
 
 - we can print it:
+  ```{r print}
+  print(result)
+  ```
 
-```{r}
-print(dendrogram)
-```
 
-- we can derive a summary of a result, too:
-
-```{r}
-summary(dendrogram)
-```
