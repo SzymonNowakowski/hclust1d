@@ -13,6 +13,8 @@ The better algorithmic time complexity (compared to multidimensional hierarchica
 
 The output of `hclust1d` is of the same S3 class and format as the outputs of `stats::hclust` or  `fastcluster::hclust` and thus the resulting clustering can be further investigated with standard calls to `print`, `plot` (plots a dendrogram), etc. In fact, for 1D cases the call to `hclust` can be simply replaced by a call to `hclust1d` in a *plug-and-play* manner, with the surrounding code unchanged.
 
+For information on how to get started using `hclust1d`, see our [getting started vignette](https://cran.r-project.org/package=hclust1d/vignettes/getting-started.html).
+
 ## Installing `hclust1d` package
 
 To install the development package version please execute

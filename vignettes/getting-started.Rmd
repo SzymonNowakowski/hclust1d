@@ -22,13 +22,63 @@ and bring them up to speed by providing a simple
 use case example.
 
 
-# `hclust1d` package
+# Hierarchical clustering in a nutshell
 
-The name of `hclust1d` package stands for Hierarchical CLUSTering for 1D. The package contains a suit of algorithms for univariate agglomerative hierarchical clustering. It supports a comprehensive list of choices of a linkage function, matching all possible choices in `stats::hclust` with an addition of a `true_median` linkage.
+The name of `hclust1d` package stands for Hierarchical CLUSTering for 1D. The package contains a suit of algorithms for univariate agglomerative hierarchical clustering. 
 
-Hierarchical clustering in the 1D setting works in $\mathcal{O}(n\log n)$ time. 
+Agglomerative hierarchical clustering first assigns each observation (1D point in our case) to a singleton cluster. Thus, we start off with as many clusters as there are observations. Then, in each step of the algorithm, the closest two clusters get merged. In order to decide, which clusters are *closest*, we need a way to measure either a distance, a dissimilarity or a similarity between clusters.
 
-If data is 1D then it is simply a matter of a plug-and-play replacement of `stats::hclust` calls to be able to use the advantage of our efficient implementation of the asymptotically much more efficient algorithm.
+Below, for clarity, we will drop saying *a distance, or a dissimilarity, or a similiarity* and will refer to *a distance* in this broader colloquial sense, in which for instance a triangle inequality may not hold.
+
+
+## Linkage function concept
+
+Please note, that we start off with a measure of distance, but it works for observations only. So we need to generalize this initial measure to work for clusters, too. It is easy for singleton clusters - we simply say, that a distance (or a dissimilarity, or a similiarity) between two singleton clusters is the same as between the two observations involved. 
+
+But in order to say what is a distance between more complex clusters, we need a concept of a *linkage function*. This concept constitutes a link between the distance for clusters and the distance between observations, hence its name. 
+
+For instance, we could say that a distance between two clusters $A$ and $B$ is the same as the minimal distance between any observation $a \in A$ and any observation $b \in B$. This would be called a *single linkage* in hierarchical clustering terminology. 
+
+Sometimes, instead of defining a cluster-wise distance in terms of clustered observations, it would be easier to build a distance concept for any two clusters (that are present in a current step of our hierarchical clustering procedure) inductively upon the distance concept as it got defined initially for singleton clusters. For instance, we could say, that after $A$ and $B$ got merged (denoted $A \cup B$) the distance between $A \cup B$ and any other cluster $C$ is the arithmetic average between two distances: the one between $A$ and $C$ and the one between $B$ and $C$. This would be called a *mcquitty* or *WPGMA linkage* clustering. 
+
+## Merging height
+
+Now, that we understand a concept of a linkage function, the concept of closest clusters becomes clear, too. After the closest clusters get merged, the *height* of this merging is defined as their cluster-wise distance. Obviously not only the choice of the closest clusters, but also the merging height, they both depend on a choice of a linkage function.
+
+`hclust1d` supports a comprehensive list of choices of a linkage function, matching all possible choices in `stats::hclust` with an addition of a `true_median` linkage.
+
+## Linkage functions list
+
+Below find a complete list of all linkage functions supported by `hclust1d`. We also state what is a distance of the newly merged cluster $A \cup B$ and some other cluster $C$. Sometimes it can be done in terms of the observations involved, and sometimes an inductive definition is easier. Below, the distance function is denoted $d(\cdot, \cdot)$ and it works both for observations, for clusters or for (with a slight abuse of notation), the number of observations in a cluster $X$ is denoted $\left | X \right |$.
+
+- `complete`: $d(A \cup B, C) = \max_{x \in A \cup B,\,y \in C}d(x,y)$.
+
+- `single`: $d(A \cup B, C) = \min_{x \in A \cup B,\,y \in C}d(x,y)$.
+
+- `average`, called also UPGMA (Unweighted Pair Group Method with Arithmetic mean):  $d(A \cup B, C) = \frac{1}{\left | A \cup B \right | \cdot \left | C \right |} \sum_{x \in A \cup B} \sum_{y \in C} d(x,y)$.
+
+- `centroid`, called also UPGMC (Unweighted Pair Group Method with Centroid average): $d(A \cup B, C) = \left \| \frac{ \sum_{x \in A \cup B} }{\left | A \cup B \right |} -
+                                        \frac{ \sum_{y \in C} }{\left | C \right |}
+                                \right \| ^2$. Observe, that *centroid* linkage reports height as the **squared** euclidean distance between clusters' centroids. With $d(\cdot, \cdot)$ being an euclidean distance, this can be rewritten as
+                                $d(A \cup B, C) = d \left( \frac{ \sum_{x \in A \cup B} }{\left | A \cup B \right |} -
+                                        \frac{ \sum_{y \in C} }{\left | C \right |}
+                                \right ) ^2$.
+                                
+- `median`, called also WPGMC (Weighted Pair Group Method with Centroid average): $d(A \cup B, C) = d(m_{A \cup B}, m_C)$ with $m_X$ equal to the observation in cases of $X$ being a singleton, and $m_{A \cup B} = \frac{1}{2}\left (m_A + m_B \right )$ for merged clusters $A$ and $B$. Observe, that in contrast to *centroid (UPGMA)* linkage, and despite the similarity of the acronyms, the *median (WPGMA)* linkage reports height as the **unsquarred** distance.
+
+- `mcquitty`:
+
+- `ward.D`:
+
+- `ward.D2`:
+
+- `true_median`: 
+
+## Computational complexity of 1D hierarchical clustering
+
+Hierarchical clustering in the 1D setting works in $\mathcal{O}(n\log n)$ time regardless of the linkage function used. 
+
+Compatibility with `stats::hclust` was high in the priority list and thus for 1D data it is simply a matter of a plug-and-play replacement of `stats::hclust` calls to be able to use the advantage of our fast implementation of this asymptotically much more efficient algorithm. The how-to is covered in detail in our [replacing `stats::hclust` vignette](https://cran.r-project.org/package=hclust1d/vignettes/replacing_hclust.html).
 
 # OK, so let's get started
 
@@ -44,26 +94,35 @@ Working with `hclust1d` is very simple an requires only passing the data points 
 optionally a linkage method to `hclust1d` function (complete linkage is used as a default, if the linkage method is not provided). The simplest example of a complete linkage clustering:
 
 ```{r}
-result <- hclust1d(rnorm(10))
+points <- rnorm(10)
+result <- hclust1d(points)
 ```
 
 The `hclust1d` function returns an object of the same type that is returned from `stats::hclust` (a list object with S3 class \code{"hclust"}, to be specific).
-This makes it straightforward to further work with the clustering results:
 
-- we can plot it:
+
+- This makes it straightforward to further work with the clustering results. E.g. we can plot it (observe that `plot.hclust` gets called internally below):
   ```{r plot, fig.height=4, fig.width=6, small.mar=TRUE}
   plot(result)
   ```
 
-- we can convert it to a dendrogram and further work with it
+- We can also generate clustering for the named 1D points:
+  ```{r}
+  names(points) <- paste("point", 0:9, sep = "-")
+  result <- hclust1d(points)
+  plot(result)
+  ```
+
+- We can print the clustering result:
+  ```{r print}
+  print(result)
+  ```
+
+- Or we can convert the clustering result to a dendrogram and further work with it (observe that `plot.dendrogram` gets called internally below):
   ```{r dendrogram_plot, fig.height=4, fig.width=6, small.mar=TRUE}
   dendrogram <- as.dendrogram(result)
   plot(dendrogram, type = "triangle", ylab = "Height")
   ```
 
-- we can print it:
-  ```{r print}
-  print(result)
-  ```
 
 
