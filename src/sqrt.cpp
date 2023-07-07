@@ -15,6 +15,9 @@ NumericVector sqrt(NumericVector & squared_distances) {
     res[i] = std::sqrt(squared_distances[i]);
   }
 
+  if (squared_distances.attr("Labels") != R_NilValue)
+    res.attr("Labels") = squared_distances.attr("Labels");
+
   return res;
 
 }
