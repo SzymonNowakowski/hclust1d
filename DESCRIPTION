@@ -1,15 +1,16 @@
 Package: hclust1d
 Title: Hierarchical Clustering of Univariate (1d) Data
-Version: 0.0.1.9004
+Version: 0.0.1.9005
 Authors@R: 
     person("Szymon", "Nowakowski", email = "s.nowakowski@mimuw.edu.pl", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1939-9512"))
-Description: A suit of algorithms for univariate agglomerative hierarchical clustering (with a comprehensive list of choices of a linkage function) in O(n*log n) time. The better algorithmic time complexity is paired with an efficient 'C++' implementation.
+Description: Univariate agglomerative hierarchical clustering with a comprehensive list of choices of a linkage function in O(n*log n) time. The better algorithmic time complexity is paired with an efficient 'C++' implementation.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 Suggests: 
     knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 URL: https://github.com/SzymonNowakowski/hclust1d 
 BugReports: https://github.com/SzymonNowakowski/hclust1d/issues
@@ -19,3 +20,4 @@ LinkingTo:
 Imports: 
     Rcpp
 Config/testthat/edition: 3
+VignetteBuilder: knitr

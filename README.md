@@ -7,11 +7,13 @@
 
 # Introduction
 
-Package `hclust1d` (Hierarchical CLUSTering for 1D) is a suit of algorithms for univariate agglomerative hierarchical clustering  (with a comprehensive list of choices of a linkage function, please consult `supported_methods` for the current list) in $\mathcal{O}(n\log n)$ time. 
+Package `hclust1d` (Hierarchical CLUSTering for 1D) is a suit of algorithms for univariate agglomerative hierarchical clustering (with a comprehensive list of choices of a linkage function, please consult `supported_methods` for the current list) in $\mathcal{O}(n\log n)$ time. 
 
 The better algorithmic time complexity (compared to multidimensional hierarchical clustering) paired with its efficient `C++` implementation make `hclust1d` very fast. The computational time beats `stats::hclust` on all sizes of data and is *en par* with `fastcluster::hclust` with small data sizes. However, it is of orders of magnitude faster than both multivariate clustering routines on larger data sizes.
 
-The output of `hclust1d` is of the same S3 class and format as the outputs of `stats::hclust` or  `fastcluster::hclust` and thus the resulting clustering can be further investigated with standard calls to `print`, `summary`, `plot` (plots a dendrogram), etc. In fact, for 1D cases the call to `hclust` can be simply replaced by a call to `hclust1d` in a *plug-and-play* manner, with the surrounding code unchanged.
+The output of `hclust1d` is of the same S3 class and format as the outputs of `stats::hclust` or  `fastcluster::hclust` and thus the resulting clustering can be further investigated with standard calls to `print`, `plot` (plots a dendrogram), etc. In fact, for 1D cases the call to `hclust` can be simply replaced by a call to `hclust1d` in a *plug-and-play* manner, with the surrounding code unchanged.
+
+For information on how to get started using `hclust1d`, see our [getting started vignette](https://cran.r-project.org/package=hclust1d/vignettes/getting-started.html).
 
 ## Installing `hclust1d` package
 

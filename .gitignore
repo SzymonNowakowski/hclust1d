@@ -40,3 +40,6 @@ vignettes/*.pdf
 .Rproj.user
 
 CRAN-SUBMISSION
+inst/doc
+/doc/
+/Meta/

@@ -14,4 +14,4 @@
 #' }
 #'
 #' @export
-supported_methods <- function() c("complete", "average", "centroid", "true_median", "median", "mcquitty", "single")
+supported_methods <- function() c("complete", "average", "centroid", "true_median", "median", "mcquitty", "ward.D", "ward.D2", "single")

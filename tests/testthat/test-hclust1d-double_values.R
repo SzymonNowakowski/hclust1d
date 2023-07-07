@@ -58,7 +58,7 @@ percent <- 0.25
 test_that("equality of results with stats::hclust, a vector with double repetitions", {
   # with double repetitions the clusters comprising of two singletons should be the same as in stats::hclust
   # but may be differently ordered
-  for (tested_method in c(supported_methods(), "single_implemented_by_heap")[-4]) {  #without a test for true_median
+  for (tested_method in c( supported_methods(), "single_implemented_by_heap")[-4]) {  #without a test for true_median
     stats_hlust_method <- tested_method
     if (tested_method == "single_implemented_by_heap")
       stats_hlust_method <- "single"
@@ -78,7 +78,7 @@ test_that("equality of results with stats::hclust, a vector with double repetiti
 
         squared <- FALSE
         distance <- dist(x)
-        if (tested_method %in% c("centroid", "median")) {
+        if (tested_method %in% c("centroid", "median", "ward.D")) {
           squared <- TRUE
           distance <- distance^2
         }
