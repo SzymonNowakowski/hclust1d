@@ -1,4 +1,8 @@
 
+# hclust1d 0.0.1.9006
+
+- Added a vignette on replacing `stats::hclust` with `hclust1d`
+
 # hclust1d 0.0.1.9005
 
 - Added `ward.D`, `ward.D2` linkage support and a getting started vignette
