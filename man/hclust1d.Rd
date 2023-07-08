@@ -82,7 +82,7 @@ dendrogram <- hclust1d(dist(rnorm(100))^2, distance = TRUE, squared = TRUE, meth
 
 # Faster replacements for
 # stats::hclust(dist(rnorm(100))^2, method = "median")
-# Note that stats::hclust expects squared euclidean distance input for median linkage, although that is not well documented
+# Note that stats::hclust expects squared euclidean distance input for median linkage
 # While in case of hclust1d, 3 below calls result in the equivalent output
 dendrogram <- hclust1d(rnorm(100), method = "median")
 dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "median")
