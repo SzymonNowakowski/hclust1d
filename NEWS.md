@@ -29,7 +29,7 @@
 
 # hclust1d 0.0.1.9000
 
-- Added a heap implementation of priority que with key update by id
+- Added a heap implementation of priority queue with key update by id
 - Added `complete` linkage support
 - Added a listing of all currently supported distance methods in `supported_methods`
 

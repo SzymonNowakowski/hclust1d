@@ -29,12 +29,12 @@ The name of `hclust1d` package stands for Hierarchical CLUSTering for 1D. The pa
 
 Agglomerative hierarchical clustering first assigns each observation (1D point in our case) to a singleton cluster. Thus, we start off with as many clusters as there are observations. Then, in each step of the algorithm, the closest two clusters get merged. In order to decide, which clusters are *closest*, we need a way to measure either a distance, a dissimilarity or a similarity between clusters.
 
-Below, for clarity, we will drop saying *a distance, or a dissimilarity, or a similiarity* and will refer to *a distance* in this broader colloquial sense, in which for instance a triangle inequality may not hold.
+Below, for clarity, we will drop saying *a distance, or a dissimilarity, or a similarity* and will refer to *a distance* in this broader colloquial sense, in which for instance a triangle inequality may not hold.
 
 
 ### Linkage function concept
 
-Please note, that we start off with a measure of distance, but it works for observations only. So we need to generalize this initial measure to work for clusters, too. It is easy for singleton clusters - we simply say, that a distance (or a dissimilarity, or a similiarity) between two singleton clusters is the same as between the two observations involved. 
+Please note, that we start off with a measure of distance, but it works for observations only. So we need to generalize this initial measure to work for clusters, too. It is easy for singleton clusters - we simply say, that a distance (or a dissimilarity, or a similarity) between two singleton clusters is the same as between the two observations involved. 
 
 But in order to say what is a distance between more complex clusters, we need a concept of a *linkage function*. This concept constitutes a link between the distance for clusters and the distance between observations, hence its name. 
 
@@ -65,7 +65,7 @@ Below find a complete list of all linkage functions supported by `hclust1d`. We 
                                         \frac{ \sum_{y \in C} }{\left | C \right |}
                                 \right ) ^2$.
                                 
-- `median`, called also WPGMC (Weighted Pair Group Method with Centroid average): $d(A \cup B, C) = d(m_{A \cup B}, m_C)^2$ with $m_X$ equal to the observation in cases of $X$ being a singleton, and $m_{A \cup B} = \frac{1}{2}\left (m_A + m_B \right )$ for merged clusters $A$ and $B$. Observe, that *median* linkage reports height as the **squared** distance, similarly to *centroid* linkage. Observe also, that this definition is in odds with the [Wikipedia hierarchical clustering page](https://en.wikipedia.org/wiki/Hierarchical_clustering), and although it is compatible with `stats::hclust`, this behaviour is not well documented in `stats::hclust`, either.
+- `median`, called also WPGMC (Weighted Pair Group Method with Centroid average): $d(A \cup B, C) = d(m_{A \cup B}, m_C)^2$ with $m_X$ equal to the observation in cases of $X$ being a singleton, and $m_{A \cup B} = \frac{1}{2}\left (m_A + m_B \right )$ for merged clusters $A$ and $B$. Observe, that *median* linkage reports height as the **squared** distance, similarly to *centroid* linkage. Observe also, that this definition is in odds with the [Wikipedia hierarchical clustering page](https://en.wikipedia.org/wiki/Hierarchical_clustering), and although it is compatible with `stats::hclust`, this behavior is not well documented in `stats::hclust`, either.
 
 - `mcquitty`, called also WPGMA (Weighted Pair Group Method with Arithmetic mean): $d(A \cup B, C) = \frac{d(A, C) + d(B, C)}{2}$
 
@@ -155,7 +155,7 @@ In a default statistical package in `R`, `stats::hclust` requires that the `dist
 
 However, `hclust1d` is more flexible in this regard. It accepts both $\mathbb{R}^d$ points as input (with $d=1$, because `hclust1d` works only in 1D setting) and a `dist` S3 class input. Actually, the raw points are recreated from a distance structure anyway, so raw point input is preferred and works a little bit faster.
 
-If you want to provide the `dist` structure, please remember to change a `distance` argument to `TRUE` in a call to `hclust1d`. The two examples below return results that are completely equivalent. For diveristy, `single` linkage is used in the two examples below:
+If you want to provide the `dist` structure, please remember to change a `distance` argument to `TRUE` in a call to `hclust1d`. The two examples below return results that are completely equivalent. For diversity, `single` linkage is used in the two examples below:
 
 ```{r points_or_dist, fig.height=4, fig.width=6, small.mar=TRUE}
 result_points <- hclust1d(points, method = "single")

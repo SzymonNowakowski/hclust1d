@@ -36,7 +36,7 @@ Maintaining compatibility of `hclust` with `stats::hclust`was high on a list of 
 1. All linkage functions of `stats::hclust` are supported in `hclust1d`, too. 
 2. Input to `stats::hclust` should be `dist` S3 class structure as produced by `stats::dist` function and the same input is accepted in `hclust1d` (with a `distance` argument explicitly set to `TRUE`).
 3. There are three atypical linkages in `stats::hclust`. Namely, `stats::hclust` requires that the **squared** `dist` structure is provided for `ward.D`, `centroid` and `median` linkage functions. This is implicit. The same input is accepted in `hclust1d` (with `distance` and `squared` arguments explicitly set to `TRUE`).
-4. The object returned from `returned `hclast1d` call is the same S3 class as the result of `stats::hclust`, namely `hclust` S3 class.
+4. The object returned from `returned `hclust1d` call is the same S3 class as the result of `stats::hclust`, namely `hclust` S3 class.
 5. The heights returned from `hclust1d` are calculated the same, as in `stats::hclust`:
 
    a. **squared** respective distances are returned for `ward.D`, `centroid` and `median` linkage functions,
@@ -99,7 +99,7 @@ res <- hclust1d(squared_d, method = linkage_function_name, distance = TRUE, squa
 Somewhere in the code above this line, `squared_d` has been computed by a call to
 `stats::dist` from a vector of 1D points and subsequently squaring the `stats::dist` result.
 
-Somewhere below in the code `res` gets analysed, but it is OK, because the results of both calls are compatible.
+Somewhere below in the code `res` gets analyzed, but it is OK, because the results of both calls are compatible.
 
 ### Optional changes to the surrounding code
 
@@ -139,7 +139,7 @@ res <- hclust1d(d, method = linkage_function_name, distance = TRUE)
 Somewhere in the code above this line, `d` has been computed by a call to
 `stats::dist` from a vector of 1D points.
 
-Somewhere below in the code `res` gets analysed, but it is OK, because the results of both calls are compatible.
+Somewhere below in the code `res` gets analyzed, but it is OK, because the results of both calls are compatible.
 
 ### Optional changes to the surrounding code
 
