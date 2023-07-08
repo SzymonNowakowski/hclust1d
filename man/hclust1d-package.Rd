@@ -4,6 +4,9 @@
 \name{hclust1d-package}
 \alias{hclust1d-package}
 \title{hclust1d-package}
+\description{
+Univariate agglomerative hierarchical clustering with a comprehensive list of choices of a linkage function in O(n*log n) time. The better algorithmic time complexity is paired with an efficient 'C++' implementation.
+}
 \section{All \code{hclust1d} Functions}{
 
 

@@ -167,23 +167,3 @@ void heapify_down(struct heap & h, int i) {
   }
 }
 
-// [[Rcpp::export()]]
-void heap_experiments() {
-  std::vector<double> x = {3,4,5, -3};
-  std::cout << x[1] <<"\n";
-
-  struct heap h = init_heap(x);
-
-  insert(h, -1);
-
-  std::pair<double, int> p = remove_minimum(h);
-  std::cout << p.first << " "<< p. second <<"\n";
-
-  for (int i=0; i<900; i++)
-    insert(h, i);
-
-  for (int i=0; i<910; i++) {
-    p = remove_minimum(h);
-    std::cout << p.first << " "<< p. second <<"\n";
-  }
-}

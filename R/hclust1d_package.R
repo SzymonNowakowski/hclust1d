@@ -2,6 +2,7 @@
 #'
 #' @name hclust1d-package
 #' @docType package
+#' @description Univariate agglomerative hierarchical clustering with a comprehensive list of choices of a linkage function in O(n*log n) time. The better algorithmic time complexity is paired with an efficient 'C++' implementation.
 #' @section All \code{hclust1d} Functions:
 #'
 #' Similar in use to \code{stats::hclust}. It consists of the following functions:

@@ -62,72 +62,60 @@ and for \code{x} in a form of a vector of 1D points (with the default \code{dist
 }
 \examples{
 
-dendrogram <- hclust1d(rnorm(100))  # A faster replacement for
-                                    # stats::hclust(dist(rnorm(100))) with a default complete linkage
+# Faster replacements for
+# stats::hclust(dist(rnorm(100))) with a default complete linkage
+dendrogram <- hclust1d(rnorm(100))
+dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE)
 
-dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE)  # A faster replacement for
-                                                           # stats::hclust(dist(rnorm(100))) with a default complete linkage
+# Faster replacements for
+# stats::hclust(dist(rnorm(100)), method = "average")
+dendrogram <- hclust1d(rnorm(100), method = "average")
+dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "average")
 
-dendrogram <- hclust1d(rnorm(100), method = "average")     # A faster replacement for
-                                                           # stats::hclust(dist(rnorm(100)), method = "average")
+# Faster replacements for
+# stats::hclust(dist(rnorm(100))^2, method = "centroid")
+# Note that stats::hclust expects squared euclidean distance input for centroid linkage
+# While in case of hclust1d, 3 below calls result in the equivalent output
+dendrogram <- hclust1d(rnorm(100), method = "centroid")
+dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "centroid")
+dendrogram <- hclust1d(dist(rnorm(100))^2, distance = TRUE, squared = TRUE, method = "centroid")
 
-dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "average")    # A faster replacement for
-                                                                                 # stats::hclust(dist(rnorm(100)), method = "average")
+# Faster replacements for
+# stats::hclust(dist(rnorm(100))^2, method = "median")
+# Note that stats::hclust expects squared euclidean distance input for median linkage, although that is not well documented
+# While in case of hclust1d, 3 below calls result in the equivalent output
+dendrogram <- hclust1d(rnorm(100), method = "median")
+dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "median")
+dendrogram <- hclust1d(dist(rnorm(100))^2, distance = TRUE, squared = TRUE, method = "median")
 
-dendrogram <- hclust1d(rnorm(100), method = "centroid")    # A faster replacement for
-                                                           # stats::hclust(dist(rnorm(100))^2, method = "centroid")
-                                                           # Note that stats::hclust expects squared euclidean distance input for centroid linkage.
+# Faster replacements for
+# stats::hclust(dist(rnorm(100)), method = "mcquitty")
+dendrogram <- hclust1d(rnorm(100), method = "mcquitty")
+dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "mcquitty")
 
-dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "centroid") # A faster replacement for
-                                                                               # stats::hclust(dist(rnorm(100))^2, method = "centroid")
-                                                                               # Note that stats::hclust expects squared euclidean distance input for centroid linkage.
+# Faster replacements for
+# stats::hclust(dist(rnorm(100))^2, method = "ward.D")
+# Note that stats::hclust expects squared euclidean distance input for ward.D linkage
+# While in case of hclust1d, 3 below calls result in the equivalent output
+dendrogram <- hclust1d(rnorm(100), method = "ward.D")
+dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "ward.D")
+dendrogram <- hclust1d(dist(rnorm(100))^2, distance = TRUE, squared = TRUE, method = "ward.D")
 
-dendrogram <- hclust1d(dist(rnorm(100))^2, distance = TRUE, squared = TRUE, method = "centroid") # A faster replacement for
-                                                                                                 # stats::hclust(dist(rnorm(100))^2, method = "centroid")
-                                                                                                 # Note that stats::hclust expects squared euclidean distance input for centroid linkage.
-dendrogram <- hclust1d(rnorm(100), method = "median")      # A faster replacement for
-                                                           # stats::hclust(dist(rnorm(100))^2, method = "median")
-                                                           # Note that stats::hclust expects squared euclidean distance input for median linkage, although that is not well documented.
+# Faster replacements for
+# stats::hclust(dist(rnorm(100)), method = "ward.D2")
+dendrogram <- hclust1d(rnorm(100), method = "ward.D2")
+dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "ward.D2")
 
-dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "median")   # A faster replacement for
-                                                                               # stats::hclust(dist(rnorm(100))^2, method = "median")
-                                                                               # Note that stats::hclust expects squared euclidean distance input for median linkage, although that is not well documented.
+# Faster replacements for
+# stats::hclust(dist(rnorm(100)), method = "single")
+dendrogram <- hclust1d(rnorm(100), method = "single")
+dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "single")
 
-dendrogram <- hclust1d(dist(rnorm(100))^2, distance = TRUE, squared = TRUE, method = "median")   # A faster replacement for
-                                                                                                 # stats::hclust(dist(rnorm(100))^2, method = "median")
-                                                                                                 # Note that stats::hclust expects squared euclidean distance input for median linkage, although that is not well documented.
+# A 1D-specific true median linkage
+dendrogram <- hclust1d(rnorm(100), method = "true_median")
 
-dendrogram <- hclust1d(rnorm(100), method = "mcquitty")    # A faster replacement for
-                                                           # stats::hclust(dist(rnorm(100)), method = "mcquitty")
-
-dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "mcquitty")   # A faster replacement for
-                                                                                 # stats::hclust(dist(rnorm(100)), method = "mcquitty")
-
-dendrogram <- hclust1d(rnorm(100), method = "ward.D")      # A faster replacement for
-                                                           # stats::hclust(dist(rnorm(100))^2, method = "ward.D")
-                                                           # Note that stats::hclust expects squared euclidean distance input for ward.D linkage.
-
-dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "ward.D")   # A faster replacement for
-                                                                               # stats::hclust(dist(rnorm(100))^2, method = "ward.D")
-                                                                               # Note that stats::hclust expects squared euclidean distance input for ward.D linkage.
-
-dendrogram <- hclust1d(dist(rnorm(100))^2, distance = TRUE, squared = TRUE, method = "ward.D")   # A faster replacement for
-                                                                                                 # stats::hclust(dist(rnorm(100))^2, method = "ward.D")
-                                                                                                 # Note that stats::hclust expects squared euclidean distance input for ward.D linkage.
-
-dendrogram <- hclust1d(rnorm(100), method = "ward.D2")     # A faster replacement for
-                                                           # stats::hclust(dist(rnorm(100)), method = "ward.D2")
-
-dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "ward.D2")    # A faster replacement for
-                                                                                 # stats::hclust(dist(rnorm(100)), method = "ward.D2")
-
-dendrogram <- hclust1d(rnorm(100), method = "single")      # A faster replacement for
-                                                           # stats::hclust(dist(rnorm(100)), method = "single")
-
-dendrogram <- hclust1d(dist(rnorm(100)), distance = TRUE, method = "single")   # A faster replacement for
-                                                                               # stats::hclust(dist(rnorm(100)), method = "single")
-
-plot(dendrogram) # plots the resulting dendrogram
+# Plotting the resulting dendrogram
+plot(dendrogram)
 
 }
 \seealso{

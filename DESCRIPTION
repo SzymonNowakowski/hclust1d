@@ -18,6 +18,6 @@ RoxygenNote: 7.2.3
 LinkingTo: 
     Rcpp
 Imports: 
-    Rcpp
+    Rcpp, utils
 Config/testthat/edition: 3
 VignetteBuilder: knitr

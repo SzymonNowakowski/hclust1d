@@ -13,10 +13,6 @@
     .Call(`_hclust1d_hclust1d_single`, points)
 }
 
-heap_experiments <- function() {
-    invisible(.Call(`_hclust1d_heap_experiments`))
-}
-
 .sqrt <- function(squared_distances) {
     .Call(`_hclust1d_sqrt`, squared_distances)
 }
