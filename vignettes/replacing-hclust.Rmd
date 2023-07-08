@@ -1,0 +1,154 @@
+---
+title: "A guide on replacing `stats::hclust` with `hclust1d`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{A guide on replacing `stats::hclust` with `hclust1d`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# This document
+
+The purpose of this vignette is to provide guidelines on replacing `stats::hclust` calls with
+`hclust1d` calls for univariate (1D) data, in a plug-and-play manner, i.e. without changing any surrounding code (or little of the surrounding code, as an option to the programmer).
+
+To enable use of `hclust1d` you need to include this line in your script or markdown notebook:
+```{r setup, message = FALSE}
+library(hclust1d)
+```
+
+In case of packages you need to import `hclust1d` in your `DESCRIPTION` file.
+
+# Prerequisities
+
+### Compatibility of `hclust1d` with `stats::hclust`
+
+Maintaining compatibility of `hclust` with `stats::hclust`was high on a list of design priorities for `hclust1d`. 
+
+1. All linkage functions of `stats::hclust` are supported in `hclust1d`, too. 
+2. Input to `stats::hclust` should be `dist` S3 class structure as produced by `stats::dist` function and the same input is accepted in `hclust1d` (with a `distance` argument explicitly set to `TRUE`).
+3. There are three atypical linkages in `stats::hclust`. Namely, `stats::hclust` requires that the **squared** `dist` structure is provided for `ward.D`, `centroid` and `median` linkage functions. This is implicit. The same input is accepted in `hclust1d` (with `distance` and `squared` arguments explicitly set to `TRUE`).
+4. The object returned from `returned `hclust1d` call is the same S3 class as the result of `stats::hclust`, namely `hclust` S3 class.
+5. The heights returned from `hclust1d` are calculated the same, as in `stats::hclust`:
+
+   a. **squared** respective distances are returned for `ward.D`, `centroid` and `median` linkage functions,
+   b. **unsquared** respective distances are returned for the remaining linkage functions.
+
+### Choosing a linkage function in `hclust1d`
+
+The list of all linkage functions supported in `hclust1d` is available by calling:
+```{r supported_methods}
+supported_methods()
+```
+
+The in-depth description of the linkage functions in `hclust1d`, together with the inter-cluster distance metric definition used in case of each linkage function (and returned as the merging height) can be found in our [getting started vignette](https://cran.r-project.org/package=hclust1d/vignettes/getting-started.html).
+
+The choice of a linkage function is the same in `hclust1d` as in `stats::hclust`, i.e. by specifying a `method` argument and passing the name of a linkage function into `hclust1d` as a character string.
+
+To provide an example, the following two calls execute `average` linkage hierarchical clustering on distances computed for a set of 1D points, by passing `method = "average"` argument to relevant calls:
+```{r average}
+points <- rnorm(10)
+
+res <- stats::hclust(stats::dist(points), method = "average")
+res <- hclust1d(stats::dist(points), method = "average", distance = TRUE)
+```
+
+### Choosing a distance metric in `hclust1d`
+
+The user of `stats::hclust` and of `hclust1d` can select a number of distance metrics when building distance-based input with `stats::dist`, by selecting an appropriate name of a metric and passing it as a `method` argument to `stats::dist` as a character string. Not all of them are supported in `hclust1d`. The list of distance metrics supported in `hclust1d` is available by calling:
+```{r dist_supported_methods}
+supported_dist.methods()
+```
+
+The trick here is that for 1D points `euclidean`, `maximum`, `manhattan` and `minkowski` distances are equivalent. 
+
+To provide an example, the following two calls execute `average` linkage hierarchical clustering on distances computed by `minkowski` $L_3$ norm for a set of 1D points, by passing `method = "minkowski"` and `p = 3` arguments to relevant `stats::dist` calls:
+```{r minkowski}
+points <- rnorm(10)
+
+res <- stats::hclust(stats::dist(points, method = "minkowski", p=3), method="average")
+res <- hclust1d(stats::dist(points, method = "minkowski", p=3), method="average", distance = TRUE)
+```
+
+
+### Exceptions
+
+We don't support `members` argument in `hclust1d`.
+
+# Replacing `stats::hclust` in case of `ward.D`, `centroid` or `median` linkage functions
+
+**This section DOES NOT apply to *ward.D2* linkage function, despite the similarity in its name**.
+
+As can be seen from the above sections, to replace a `stats::hclust` call with `hclust1d` for 1D data, one needs to replace any call to
+```{r eval=FALSE}
+res <- stats::hclust(squared_d, method = linkage_function_name, members = NULL)
+```
+by a call to
+```{r eval=FALSE}
+res <- hclust1d(squared_d, method = linkage_function_name, distance = TRUE, square = TRUE)
+```
+
+Somewhere in the code above this line, `squared_d` has been computed by a call to
+`stats::dist` from a vector of 1D points and subsequently squaring the `stats::dist` result.
+
+Somewhere below in the code `res` gets analyzed, but it is OK, because the results of both calls are compatible.
+
+### Optional changes to the surrounding code
+
+- If the programmer has access to the original `stats::dist` result (let's denote this variable `d`), the computation of `squared_d` can be removed (provided it is not used for other purpose) and a call to
+  ```{r eval=FALSE}
+  res <- stats::hclust(squared_d, method = linkage_function_name, members = NULL)
+  ```
+  can be replaced
+  by a call to
+  ```{r eval=FALSE}
+  res <- hclust1d(d, method = linkage_function_name, distance = TRUE)
+  ```
+
+- If the programmer has access to the original points (let's denote this variable `points`), the computation of `squared_d` and of `d` can be removed altogether  (provided they are not used for other purpose) and a call to
+  ```{r eval=FALSE}
+  res <- stats::hclust(squared_d, method = linkage_function_name, members = NULL)
+  ```
+  can be replaced
+  by a call to
+  ```{r eval=FALSE}
+  res <- hclust1d(points, method = linkage_function_name)
+  ```
+
+# Replacing `stats::hclust` in case of all other linkage functions, beside `ward.D`, `centroid` or `median`
+
+**This section applies to, among others, *ward.D2* linkage function**.
+
+As can be seen from the above sections, to replace a `stats::hclust` call with `hclust1d` for 1D data, one needs to replace any call to
+```{r eval=FALSE}
+res <- stats::hclust(d, method = linkage_function_name, members = NULL)
+```
+by a call to
+```{r eval=FALSE}
+res <- hclust1d(d, method = linkage_function_name, distance = TRUE)
+```
+
+Somewhere in the code above this line, `d` has been computed by a call to
+`stats::dist` from a vector of 1D points.
+
+Somewhere below in the code `res` gets analyzed, but it is OK, because the results of both calls are compatible.
+
+### Optional changes to the surrounding code
+
+If the programmer has access to the original points (let's denote this variable `points`), the computation of `d` can be removed (provided it is not used for other purpose) and a call to
+```{r eval=FALSE}
+res <- stats::hclust(d, method = linkage_function_name, members = NULL)
+```
+can be replaced
+by a call to
+```{r eval=FALSE}
+res <- hclust1d(points, method = linkage_function_name)
+```

@@ -1,7 +1,14 @@
 
+# hclust1d 0.0.1.9006
+
+- Added a vignette on replacing `stats::hclust` with `hclust1d`
+- Added citation info
+- updated `.onAttach` with citation info
+
 # hclust1d 0.0.1.9005
 
-- Added `ward.D`, `ward.D2` linkage support and a getting started vignette
+- Added `ward.D`, `ward.D2` linkage support
+- Added a getting started vignette
 
 # hclust1d 0.0.1.9004
  
@@ -22,7 +29,7 @@
 
 # hclust1d 0.0.1.9000
 
-- Added a heap implementation of priority que with key update by id
+- Added a heap implementation of priority queue with key update by id
 - Added `complete` linkage support
 - Added a listing of all currently supported distance methods in `supported_methods`
 
