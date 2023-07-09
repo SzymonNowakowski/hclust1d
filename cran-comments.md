@@ -1,3 +1,6 @@
+# This is the first resubmission of 0.1.0
+
+I limited the extent of unit tests to make it pass the precheck  rhub and win-devel checks
 
 # Local checks
 
