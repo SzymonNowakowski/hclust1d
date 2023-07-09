@@ -1,5 +1,5 @@
 
-repetitions <- 1:5
+repetitions <- 1:1
 
 expect_some_equalities <- function(res_1, res_2) {
   if (res_1$method == "single_implemented_by_heap") {

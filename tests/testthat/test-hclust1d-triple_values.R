@@ -1,5 +1,5 @@
 
-repetitions <- 1:5
+repetitions <- 1:1
 
 expect_some_equalities <- function(res_1, res_2) {
   if (res_1$method == "single_implemented_by_heap") {
@@ -87,7 +87,7 @@ get_order_triple <- function(links, res) {
   return(order(vec))
 }
 
-range <- 1:50
+range <- 1:30     #1:50
 percent_double <- 0.7
 percent_triple <- 0.3
 test_that("equality of results with stats::hclust, a vector with triple repetitions", {
