@@ -22,10 +22,11 @@ The purpose of this vignette is to introduce readers to `hclust1d` package,
 and bring them up to speed by providing a simple
 use case example.
 
+# Clustering in 1D
+
+The name of `hclust1d` package stands for Hierarchical CLUSTering for 1D. 1D means, that data is univariate or one dimensional, i.e. constitutes of real numbers. The package contains a suit of algorithms for univariate agglomerative hierarchical clustering. Clusters or clustering process in 1D is also called **segmentation**  or **breaks** [Fisher, 1958 and Jenks, 1977] and arises naturally in [research related to choropleth maps](https://macwright.com/2013/02/18/literate-jenks.html).
 
 # Hierarchical clustering in a nutshell
-
-The name of `hclust1d` package stands for Hierarchical CLUSTering for 1D. The package contains a suit of algorithms for univariate agglomerative hierarchical clustering. 
 
 Agglomerative hierarchical clustering first assigns each observation (1D point in our case) to a singleton cluster. Thus, we start off with as many clusters as there are observations. Then, in each step of the algorithm, the closest two clusters get merged. In order to decide, which clusters are *closest*, we need a way to measure either a distance, a dissimilarity or a similarity between clusters.
 
@@ -301,7 +302,9 @@ Have a look at the dendrogram plot above to verify that indeed a cut at the heig
 
 # References
 
-1. Murtagh, F. and Legendre, P. 2014. Ward's hierarchical agglomerative clustering method: which algorithms implement Ward's criterion? *Journal of Classification*, **31**, 274–295. <doi:10.1007/s00357-014-9161-z>
+1. Fisher, W. D. 1958. On Grouping for Maximum Homogeneity. J. Am. Stat. Assoc. 53 (284): 789–98. <doi:10.2307/2281952>
+2. Jenks, G. F. 1977. Optimal Data Classification for Choropleth Maps. University of Kansas. Department of Geography.
+3. Murtagh, F. and Legendre, P. 2014. Ward's hierarchical agglomerative clustering method: which algorithms implement Ward's criterion? *Journal of Classification*, **31**, 274–295. <doi:10.1007/s00357-014-9161-z>
 
 
 
