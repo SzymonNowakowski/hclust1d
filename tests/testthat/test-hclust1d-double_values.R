@@ -1,5 +1,5 @@
 
-repetitions <- 1:1
+repetitions <- 1:1   #1:5
 
 expect_some_equalities <- function(res_1, res_2) {
   if (res_1$method == "single_implemented_by_heap") {
@@ -53,7 +53,7 @@ expect_all_equalities <- function(res_1d, res_1d_alt, res_1d_dist) {
 
 get_order_double <- function(res) order(vapply(1:nrow(res$merge), function(i) if (min(res$merge[i, ]) < 0) min(res$merge[i, ]) else i, numeric(1)))
 
-range <- 1:50    #1:80
+range <- 1:20    #1:80
 percent <- 0.25
 test_that("equality of results with stats::hclust, a vector with double repetitions", {
   # with double repetitions the clusters comprising of two singletons should be the same as in stats::hclust

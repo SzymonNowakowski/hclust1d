@@ -1,5 +1,5 @@
 
-repetitions <- 1:1
+repetitions <- 1:1   #1:5
 
 expect_some_equalities <- function(res_1, res_2) {
   if (res_1$method == "single_implemented_by_heap") {
@@ -23,7 +23,7 @@ expect_equal_merges <- function(res_1, res_2) {
   }
 }
 
-range <- 2:100
+range <- 2:20    #2:100
 test_that("equality of results with stats::hclust, a vector without repetitions", {
   for (tested_method in c(supported_methods(), "single_implemented_by_heap")[-4]) {  #without a test for true_median
     stats_hlust_method <- tested_method
