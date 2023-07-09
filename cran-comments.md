@@ -3,7 +3,7 @@
 * checking tests ... [30m/30m] ERROR
   Running ‘testthat.R’ [30m/30m]
   
-**MAINTAIRNER'S COMMENT: I limited the extent of unit tests to make it pass the precheck  rhub and win-devel checks**
+**MAINTAINER'S COMMENT: I limited the extent of unit tests to make it pass the precheck  rhub and win-devel checks**
   
 * checking CRAN incoming feasibility ... [3s/4s] NOTE
 Maintainer: ‘Szymon Nowakowski <s.nowakowski@mimuw.edu.pl>’
@@ -20,7 +20,7 @@ Found the following (possibly) invalid URLs:
     Status: 404
     Message: Not Found
     
-**MAINTAIRNER'S COMMENT: Those URLs will be created during the release process**
+**MAINTAINER'S COMMENT: Those URLs will be created during the release process**
 
 # Local checks
 
