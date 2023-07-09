@@ -24,7 +24,7 @@ use case example.
 
 # Clustering in 1D
 
-The name of `hclust1d` package stands for Hierarchical CLUSTering for 1D. 1D means, that data is univariate or one dimensional, i.e. constitutes of real numbers. The package contains a suit of algorithms for univariate agglomerative hierarchical clustering. Clusters or clustering process in 1D is also called **segmentation**  or **breaks** [Fisher, 1958 and Jenks, 1977] and arises naturally in [research related to choropleth maps](https://macwright.com/2013/02/18/literate-jenks.html).
+The name of `hclust1d` package stands for Hierarchical CLUSTering for 1D. 1D means that data is univariate or one dimensional, i.e. constitutes of real numbers. The package contains a suit of algorithms for univariate agglomerative hierarchical clustering. Clusters or clustering process in 1D is also called **segmentation**  or **breaks** [Fisher, 1958 and Jenks, 1977] and arises naturally in [research related to choropleth maps](https://macwright.com/2013/02/18/literate-jenks.html).
 
 # Hierarchical clustering in a nutshell
 
