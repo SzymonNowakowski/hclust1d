@@ -156,7 +156,11 @@ In a default statistical package in `R`, `stats::hclust` requires that the `dist
 
 However, `hclust1d` is more flexible in this regard. It accepts both $\mathbb{R}^d$ points as input (with $d=1$, because `hclust1d` works only in 1D setting) and a `dist` S3 class input. Actually, the raw points are recreated from a distance structure anyway, so raw point input is preferred and works a little bit faster.
 
-If you want to provide the `dist` structure, please remember to change a `distance` argument to `TRUE` in a call to `hclust1d`. The two examples below return results that are completely equivalent. For diversity, `single` linkage is used in the two examples below:
+If you want to provide the `dist` structure, please remember to change a `distance` argument to `TRUE` in a call to `hclust1d`. The two examples below return results that are completely equivalent. 
+
+### Examples
+
+For diversity, `single` linkage is used in the two examples below:
 
 ```{r points_or_dist, fig.height=4, fig.width=6, small.mar=TRUE}
 result_points <- hclust1d(points, method = "single")
@@ -185,6 +189,9 @@ The below points should be observed:
 - If you want to provide the **unsquared** `dist` structure, please remember to change a `distance` argument to `TRUE` in a call to `hclust1d`. 
 - If you want to provide the **squared** `dist` structure, please remember to change both `distance` and `squared` arguments to `TRUE` in a call to `hclust1d`.
 
+
+### Examples 
+
 ```{r squared, fig.height=4, fig.width=6, small.mar=TRUE}
 result_points <- hclust1d(points, method = "ward.D")
 plot(result_points)
@@ -200,7 +207,7 @@ result_dist <- hclust1d(squared_distances, distance = TRUE, squared = TRUE, meth
 plot(result_dist)
 ```
 
-The three examples above return results that are completely equivalent (up to the order and shift, because again you will notice, that the first clustering is a mirror reflection of the second and third clusterings). 
+The three examples above return results that are completely equivalent (up to the order and shift, because again you will notice, that the first clustering is a mirror reflection of the second and the third clusterings). 
 
 Please also note, that regardless of input, the height is returned as the appropriately **squared** distance measure for `ward.D`, `centroid` and `median` linkage functions, so the results remain compatible with `stats::hclust` results for the squared `dist` input (for those linkages). Please check the result below, for comparison. It presents the same clustering with the same heights, only the presented order of points is reorganized.
 
