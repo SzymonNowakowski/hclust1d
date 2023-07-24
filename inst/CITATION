@@ -4,7 +4,7 @@ bibentry(bibtype="Misc",
          url = "https://cran.r-project.org/package=hclust1d",
          year = "2023",
          type = "Computer Software",
-         header="To akcnowledge my work please cite hclust1d in publications as:",
+         header="To acknowledge my work please cite hclust1d in publications as:",
          textVersion = "Nowakowski, Szymon (2023). hclust1d: Hierarchical Clustering of Univariate (1d) Data. https://cran.r-project.org/package=hclust1d")
 
 
