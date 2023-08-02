@@ -59,29 +59,29 @@ Below find a complete list of all linkage functions supported by `hclust1d`. We 
 
 - `average`, called also UPGMA (Unweighted Pair Group Method with Arithmetic mean): a distance between two clusters is the (arithmetic) average distance between all pairs of observations in the involved clusters, formally $d(A \cup B, C) = \frac{\sum_{x \in A \cup B} \sum_{y \in C} d(x,y)}{\left | A \cup B \right | \cdot \left | C \right |}$.
 
-- `centroid`, called also UPGMC (Unweighted Pair Group Method with Centroid average): $d(A \cup B, C) = \left \| \frac{ \sum_{x \in A \cup B} }{\left | A \cup B \right |} -
-                                        \frac{ \sum_{y \in C} }{\left | C \right |}
+- `centroid`, called also UPGMC (Unweighted Pair Group Method with Centroid average): $d(A \cup B, C) = \left \| \frac{ \sum_{x \in A \cup B} x }{\left | A \cup B \right |} -
+                                        \frac{ \sum_{y \in C} y }{\left | C \right |}
                                 \right \| ^2$. Observe, that *centroid* linkage reports height as the **squared** euclidean distance between clusters' centroids. With $d(\cdot, \cdot)$ being an euclidean distance, this can be rewritten as
-                                $d(A \cup B, C) = d \left( \frac{ \sum_{x \in A \cup B} }{\left | A \cup B \right |},
-                                        \frac{ \sum_{y \in C} }{\left | C \right |}
+                                $d(A \cup B, C) = d \left( \frac{ \sum_{x \in A \cup B} x}{\left | A \cup B \right |},
+                                        \frac{ \sum_{y \in C} y}{\left | C \right |}
                                 \right ) ^2$.
                                 
 - `median`, called also WPGMC (Weighted Pair Group Method with Centroid average): $d(A \cup B, C) = d(m_{A \cup B}, m_C)^2$ with $m_X$ equal to the observation in cases of $X$ being a singleton, and $m_{A \cup B} = \frac{1}{2}\left (m_A + m_B \right )$ for merged clusters $A$ and $B$. Observe, that *median* linkage reports height as the **squared** distance, similarly to *centroid* linkage. Observe also, that this definition is in odds with the [Wikipedia hierarchical clustering page](https://en.wikipedia.org/wiki/Hierarchical_clustering), and although it is compatible with `stats::hclust`, this behavior is not well documented in `stats::hclust`, either.
 
 - `mcquitty`, called also WPGMA (Weighted Pair Group Method with Arithmetic mean): $d(A \cup B, C) = \frac{d(A, C) + d(B, C)}{2}$
 
-- `ward.D`, called also MISSQ (Minimum Increase of Sum of SQuares): $d(A \cup B, C) = \frac{\left | A \cup B \right | \cdot \left | C \right |}{\left | A \cup B \cup C \right |} \cdot \left \| \frac{ \sum_{x \in A \cup B} }{\left | A \cup B \right |} -
-                                        \frac{ \sum_{y \in C} }{\left | C \right |}
+- `ward.D`, called also MISSQ (Minimum Increase of Sum of SQuares): $d(A \cup B, C) = \frac{\left | A \cup B \right | \cdot \left | C \right |}{\left | A \cup B \cup C \right |} \cdot \left \| \frac{ \sum_{x \in A \cup B} x}{\left | A \cup B \right |} -
+                                        \frac{ \sum_{y \in C} y}{\left | C \right |}
                                 \right \| ^2$. Observe, that *ward.D* linkage reports height as the **squared** euclidean distance between clusters' centroids weighted with a (half of) harmonic mean of relevant clusters' sizes. With $d(\cdot, \cdot)$ being an euclidean distance, this can be rewritten as
-                                $d(A \cup B, C) = \frac{\left | A \cup B \right | \cdot \left | C \right |}{\left | A \cup B \cup C \right |} \cdot  d \left( \frac{ \sum_{x \in A \cup B} }{\left | A \cup B \right |},
-                                        \frac{ \sum_{y \in C} }{\left | C \right |}
+                                $d(A \cup B, C) = \frac{\left | A \cup B \right | \cdot \left | C \right |}{\left | A \cup B \cup C \right |} \cdot  d \left( \frac{ \sum_{x \in A \cup B} x}{\left | A \cup B \right |},
+                                        \frac{ \sum_{y \in C} y}{\left | C \right |}
                                 \right ) ^2$.
 
-- `ward.D2`: added to `stats::hclust` in `R >3.0.3` versions to implement the original *Ward's* linkage function [Murtagh and Legendre, 2014] which is *not* implemented with `ward.D`. The reported height in `ward.D2` is the square root of the height in `ward.D`, i.e. $d(A \cup B, C) = \sqrt{\frac{\left | A \cup B \right | \cdot \left | C \right |}{\left | A \cup B \cup C \right |} } \cdot \left \| \frac{ \sum_{x \in A \cup B} }{\left | A \cup B \right |} -
-                                        \frac{ \sum_{y \in C} }{\left | C \right |}
+- `ward.D2`: added to `stats::hclust` in `R >3.0.3` versions to implement the original *Ward's* linkage function [Murtagh and Legendre, 2014] which is *not* implemented with `ward.D`. The reported height in `ward.D2` is the square root of the height in `ward.D`, i.e. $d(A \cup B, C) = \sqrt{\frac{\left | A \cup B \right | \cdot \left | C \right |}{\left | A \cup B \cup C \right |} } \cdot \left \| \frac{ \sum_{x \in A \cup B} x}{\left | A \cup B \right |} -
+                                        \frac{ \sum_{y \in C} y}{\left | C \right |}
                                 \right \|$. So *ward.D2* linkage reports height as the **unsquared** euclidean distance between clusters' centroids weighted with a square root of (half of) harmonic mean of relevant clusters' sizes. With $d(\cdot, \cdot)$ being an euclidean distance, this can be rewritten as
-                                $d(A \cup B, C) = \sqrt{ \frac{\left | A \cup B \right | \cdot \left | C \right |}{\left | A \cup B \cup C \right |} } \cdot  d \left( \frac{ \sum_{x \in A \cup B} }{\left | A \cup B \right |},
-                                        \frac{ \sum_{y \in C} }{\left | C \right |}
+                                $d(A \cup B, C) = \sqrt{ \frac{\left | A \cup B \right | \cdot \left | C \right |}{\left | A \cup B \cup C \right |} } \cdot  d \left( \frac{ \sum_{x \in A \cup B} x }{\left | A \cup B \right |},
+                                        \frac{ \sum_{y \in C} y }{\left | C \right |}
                                 \right )$.
 
 - `true_median`: $d(A \cup B, C) = d(m_{A \cup B}, m_C)$ with $m_X$ being the median of observations in $X$ (specifically, the middle-valued observation in case of $\left | X \right |$ odd, and the arithmetic mean of the two middle-valued observations in case of $\left | X \right |$ even). Note also, that a concept of a median makes sense only for 1D points.
