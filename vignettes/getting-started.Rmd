@@ -66,7 +66,7 @@ Below find a complete list of all linkage functions supported by `hclust1d`. We 
                                         \frac{ \sum_{y \in C} y}{\left | C \right |}
                                 \right ) ^2$.
                                 
-- `median`, called also WPGMC (Weighted Pair Group Method with Centroid average): $d(A \cup B, C) = d(m_{A \cup B}, m_C)^2$ with $m_X$ equal to the observation in cases of $X$ being a singleton, and $m_{A \cup B} = \frac{1}{2}\left (m_A + m_B \right )$ for merged clusters $A$ and $B$. Observe, that *median* linkage reports height as the **squared** distance, similarly to *centroid* linkage. Observe also, that this definition is in odds with the [Wikipedia hierarchical clustering page](https://en.wikipedia.org/wiki/Hierarchical_clustering), and although it is compatible with `stats::hclust`, this behavior is not well documented in `stats::hclust`, either.
+- `median`, called also WPGMC (Weighted Pair Group Method with Centroid average): $d(A \cup B, C) = d(m_{A \cup B}, m_C)^2$ with $m_X$ equal to the observation in cases of $X$ being a singleton, and $m_{A \cup B} = \frac{1}{2}\left (m_A + m_B \right )$ for merged clusters $A$ and $B$. Observe, that *median* linkage reports height as the **squared** distance, similarly to *centroid* linkage. Observe also, that this definition is in odds with the [Wikipedia hierarchical clustering page](https://en.wikipedia.org/wiki/Hierarchical_clustering#Cluster_Linkage), and although it is compatible with `stats::hclust`, this behavior is not well documented in `stats::hclust`, either.
 
 - `mcquitty`, called also WPGMA (Weighted Pair Group Method with Arithmetic mean): $d(A \cup B, C) = \frac{d(A, C) + d(B, C)}{2}$
 
