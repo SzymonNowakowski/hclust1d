@@ -156,7 +156,7 @@ In a default statistical package in `R`, `stats::hclust` requires that the `dist
 
 However, `hclust1d` is more flexible in this regard. It accepts both $\mathbb{R}^d$ points as input (with $d=1$, because `hclust1d` works only in 1D setting) and a `dist` S3 class input. Actually, the raw points are recreated from a distance structure anyway, so raw point input is preferred and works a little bit faster.
 
-If you want to provide the `dist` structure, please remember to change a `distance` argument to `TRUE` in a call to `hclust1d`. The two examples below return results that are completely equivalent. 
+If you want to provide the `dist` structure, please remember to change a `distance` argument to `TRUE` in a call to `hclust1d`. The two examples below return results that are equivalent (but not equal - a note on that follows below). 
 
 ### Examples
 
@@ -207,7 +207,7 @@ result_dist <- hclust1d(squared_distances, distance = TRUE, squared = TRUE, meth
 plot(result_dist)
 ```
 
-The three examples above return results that are completely equivalent (up to the order and shift, because again you will notice, that the first clustering is a mirror reflection of the second and the third clusterings). 
+The three examples above return results that are equivalent (up to the order and shift, because again you will notice, that the first clustering is a mirror reflection of the second and the third clusterings). 
 
 Please also note, that regardless of input, the height is returned as the appropriately **squared** distance measure for `ward.D`, `centroid` and `median` linkage functions, so the results remain compatible with `stats::hclust` results for the squared `dist` input (for those linkages). Please check the result below, for comparison. It presents the same clustering with the same heights, only the presented order of points is reorganized.
 
@@ -260,7 +260,7 @@ result <- hclust1d(points)
 plot(result)
 ```
 
-The exact merging height values may not be apparent from the dendrogram plot. They are the as follows:
+The exact merging height values may not be apparent from the dendrogram plot. They are as follows:
 ```{r heights}
 print(result$height)
 ```
