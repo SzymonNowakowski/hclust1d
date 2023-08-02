@@ -27,6 +27,13 @@ library(hclust1d)
 
 In case of packages you need to import `hclust1d` in your `DESCRIPTION` file.
 
+# Why bother?
+
+The main reason a programmer might want to replace `stats:hclust` calls with
+`hclust1d` in case of clustering 1D points is that the computational complexity of `hclust1d` is $\mathcal{O}(n\log n)$, while it is at least quadratic (and $\mathcal{O}(n^2\log n)$ for case of general linkage) for multidimensional algorithms.
+
+The better algorithmic time complexity (compared to multidimensional hierarchical clustering) paired with its efficient `C++` implementation make `hclust1d` very fast. The computational time beats `stats::hclust` on all sizes of data and is *en par* with `fastcluster::hclust` with small data sizes. However, it is of orders of magnitude faster than both multivariate clustering routines on larger data sizes.
+
 # Prerequisities
 
 ### Compatibility of `hclust1d` with `stats::hclust`
@@ -123,7 +130,7 @@ Somewhere below in the code `res` gets analyzed, but it is OK, because the resul
   res <- hclust1d(points, method = linkage_function_name)
   ```
 
-# Replacing `stats::hclust` in case of all other linkage functions, beside `ward.D`, `centroid` or `median`
+# Replacing `stats::hclust` in case of all other linkage functions, besides `ward.D`, `centroid` or `median`
 
 **This section applies to, among others, *ward.D2* linkage function**.
 
