@@ -34,7 +34,7 @@ The main reason a programmer might want to replace `stats:hclust` calls with
 
 The better algorithmic time complexity (compared to multidimensional hierarchical clustering) paired with its efficient `C++` implementation make `hclust1d` very fast. The computational time beats `stats::hclust` on all sizes of data and is *en par* with `fastcluster::hclust` with small data sizes. However, it is of orders of magnitude faster than both multivariate clustering routines on larger data sizes.
 
-# Prerequisities
+# Introduction
 
 ### Compatibility of `hclust1d` with `stats::hclust`
 
