@@ -94,7 +94,7 @@ We don't support `members` argument in `hclust1d`.
 
 **This section DOES NOT apply to *ward.D2* linkage function, despite the similarity in its name**.
 
-As can be seen from the above sections, to replace a `stats::hclust` call with `hclust1d` for 1D data, one needs to replace any call to
+For those three linkage functions (`ward.D`, `centroid` or `median`) the default hierarchical clustering routine `stats::hclust` requires *squared* distance structure calculated on original points. Consequently, as can be seen from the sections above, to replace a `stats::hclust` call with `hclust1d` for 1D data, one needs to replace any call to
 ```{r eval=FALSE}
 res <- stats::hclust(squared_d, method = linkage_function_name, members = NULL)
 ```
@@ -134,7 +134,7 @@ Somewhere below in the code `res` gets analyzed, but it is OK, because the resul
 
 **This section applies to, among others, *ward.D2* linkage function**.
 
-As can be seen from the above sections, to replace a `stats::hclust` call with `hclust1d` for 1D data, one needs to replace any call to
+For those remaining linkage functions `stats::hclust` accepts regular (*unsquared*) distance structure calculated on original points. Consequently, as can be seen from the sections above, to replace a `stats::hclust` call with `hclust1d` for 1D data, one needs to replace any call to
 ```{r eval=FALSE}
 res <- stats::hclust(d, method = linkage_function_name, members = NULL)
 ```

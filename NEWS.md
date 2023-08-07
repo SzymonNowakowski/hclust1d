@@ -1,7 +1,7 @@
 
-# hclust1d 0.1.0.9000
+# hclust1d 0.1.1
 
-- Fixing typos in vignettes
+- Fixing typos and rephrasing vignettes
 
 # hclust1d 0.1.0
 
