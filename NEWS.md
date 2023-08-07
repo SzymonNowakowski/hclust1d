@@ -1,4 +1,8 @@
 
+# hclust1d 0.1.1.9000
+
+- Starting a new development version
+
 # hclust1d 0.1.1
 
 - Fixing typos and rephrasing vignettes
